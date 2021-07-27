@@ -1,12 +1,18 @@
 "use strict";
-window.onload = function () {
+window.onload = function snake() {
   const canvas = document.getElementById("canvas-main-id");
   const canvasBg = document.getElementById("canvas-bg-id");
   const canvasWrapper = document.getElementById("wrapper");
+  const closeSettingsBtn = document.getElementById("close-settings");
+  const openSettingsBtn = document.getElementById("open-settings");
+  const overCanvas = document.getElementById("over-canvas-id");
 
   const stepsCount = 15;
   const c = canvas.getContext("2d");
   const cBg = canvasBg.getContext("2d");
+
+  const gridColor = "rgb(50, 50, 50)";
+  const borderColor = "rgb(248, 55, 31)";
 
   let wW; //windowWidth
   let canvasSize;
@@ -19,7 +25,13 @@ window.onload = function () {
 
   resizeCanvas();
   window.addEventListener("resize", resizeOptimally);
+  closeSettingsBtn.addEventListener("click", function () {
+    overCanvas.style.display = "none";
+  });
 
+  openSettingsBtn.addEventListener("click", function () {
+    overCanvas.style.display = "flex";
+  });
   function toggleGrid() {
     isGrid = isGrid ? !isGrid : isGrid;
   }
@@ -31,7 +43,7 @@ window.onload = function () {
   function drawBorder() {
     let lineWidth = 2;
     cBg.lineWidth = lineWidth;
-    cBg.strokeStyle = "rgb(248, 55, 31)";
+    cBg.strokeStyle = borderColor;
     cBg.beginPath();
     cBg.moveTo(0, 0);
     cBg.lineTo(0, canvasSize);
@@ -45,7 +57,7 @@ window.onload = function () {
     if (isGrid) {
       for (let n = step; n <= canvasSize - step; n += step) {
         cBg.lineWidth = lineWidth;
-        cBg.strokeStyle = "rgba(241, 94, 60, 0.5)";
+        cBg.strokeStyle = gridColor;
         cBg.beginPath();
         cBg.moveTo(n, 0);
         cBg.lineTo(n, canvasSize);

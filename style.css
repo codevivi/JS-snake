@@ -47,10 +47,149 @@
 
 .over-canvas {
     position: absolute;
+    background-color: rgb(37, 37, 38);
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+}
+
+.display {
+    position: absolute;
+    top: -2em;
+    left: 0;
+    width: 100%;
+    height: 2em;
+    background-color: rgb(37, 37, 38);
+    background-color: transparent;
+    margin: 0.2em 0;
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    color: rgb(107, 105, 105);
+}
+
+.display p {
+    margin: 0 1em;
+    font-size: 0.7em;
+}
+
+.disp-svg {
+    width: 12px;
+    height: 12px;
+}
+
+@media all and (min-width: 525px) {
+
+    .display p {
+        margin: 0 1em;
+        font-size: 1em;
+    }
+
+    .disp-svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+
+.settings {
+    color: white;
+    padding: 1em;
+}
+
+
+.settings-button {
+    width: 2.5em;
+    height: 2.5em;
+    display: block;
+    position: absolute;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.settings-button--close {
+    background-color: rgb(248, 55, 31);
+    top: -2em;
+    right: 0;
+    width: 2.6em;
+    height: 2.6em;
+}
+
+.settings-button--open {
+    top: -2px;
+    right: 0;
+    background-color: transparent;
+
+}
+
+.settings-title {
+    margin-bottom: 1.6em;
+    font-size: 1.2em;
+}
+
+.button-field {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 1em 0;
+}
+
+.button-label {
+    margin-right: 1em;
+}
+
+.toggle-button {
+    display: block;
+    background-color: black;
+    width: 40px;
+    height: 20px;
+    padding: 3px;
+    border-radius: 40%;
+    position: relative;
+    border: none;
+}
+
+.toggler {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: grey;
+    position: absolute;
+    left: -3px;
+    top: 0;
+
+}
+
+select {
+    background-color: transparent;
+    background-color: rgb(42, 42, 42);
+    color: rgb(71, 255, 82);
+    border: 5px solid rgb(42, 42, 42);
+    padding: 0.5rem;
+    border-radius: 10%;
+    font-size: 1.5em;
+}
+
+select option {
+    background-color: blue;
+    font-size: 0.8em;
+    padding: 0.5rem;
+}
+
+.on {
+    background-color: rgb(71, 255, 82);
+    left: 23px;
 }
