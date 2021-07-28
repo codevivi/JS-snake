@@ -14,6 +14,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background-image: url(resources/images/snake-right.png);
+    background-size: 200px;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.title {
+    float: left;
+    color: rgb(71, 255, 82);
+    display: block;
+    text-emphasis: 'v'rgb(248, 55, 31);
+    height: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    font-size: 1.2rem;
+
+}
+
+.title img {
+    display: block;
+    float: left;
+    height: 1em;
 }
 
 .hidden {
@@ -47,7 +71,7 @@
 
 .over-canvas {
     position: absolute;
-    background-color: rgb(37, 37, 38);
+    background-color: rgb(38, 37, 37);
     top: 0;
     left: 0;
     bottom: 0;

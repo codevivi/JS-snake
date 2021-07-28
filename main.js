@@ -13,6 +13,7 @@ window.onload = function snake() {
 
   const gridColor = "rgb(50, 50, 50)";
   const borderColor = "rgb(248, 55, 31)";
+  const snakeColor = "rgb(71, 255, 82)";
 
   let wW; //windowWidth
   let canvasSize;
@@ -20,11 +21,18 @@ window.onload = function snake() {
   let resizeTimeout;
 
   ///settings variables
+  let isPlaying = false;
+  let isPaused = false;
   let isGrid = true;
   let isBorder = true;
+  let isSound = false;
 
   resizeCanvas();
+
+  overCanvas.style.display = "none";
+
   window.addEventListener("resize", resizeOptimally);
+  applyBorderAndGrid();
   closeSettingsBtn.addEventListener("click", function () {
     overCanvas.style.display = "none";
   });
@@ -46,10 +54,41 @@ window.onload = function snake() {
     cBg.strokeStyle = borderColor;
     cBg.beginPath();
     cBg.moveTo(0, 0);
-    cBg.lineTo(0, canvasSize);
-    cBg.lineTo(canvasSize, canvasSize);
-    cBg.lineTo(canvasSize, 0);
-    cBg.lineTo(0, 0);
+    let b;
+    for (let y = 0; y <= canvasSize - step; y += step) {
+      cBg.lineTo(0, y + step / 2 - 2);
+      cBg.lineTo(4, y + step / 2 + 2);
+      cBg.lineTo(0, y + step / 2 + 2);
+      cBg.lineTo(0, y + step);
+    }
+    for (let x = 0; x <= canvasSize - step; x += step) {
+      cBg.lineTo(x + step / 2 - 2, canvasSize);
+      cBg.lineTo(x + step / 2 + 2, canvasSize - 4);
+      cBg.lineTo(x + step / 2 + 2, canvasSize);
+      cBg.lineTo(x + step, canvasSize);
+    }
+    for (let y = canvasSize; y !== 0; y -= step) {
+      cBg.lineTo(canvasSize, y - step / 2 + 2);
+      cBg.lineTo(canvasSize - 4, y - step / 2 - 2);
+      cBg.lineTo(canvasSize, y - step / 2 - 2);
+      cBg.lineTo(canvasSize, y - step);
+    }
+    for (let x = canvasSize; x !== 0; x -= step) {
+      cBg.lineTo(x - step / 2 + 2, 0);
+      cBg.lineTo(x - step / 2 - 2, 4);
+      cBg.lineTo(x - step / 2 - 2, 0);
+      cBg.lineTo(x - step, 0);
+    }
+    // for (let n = canvasSize; n !== 0; n -= step) {
+    //   cBg.lineTo(n - step / 2 - 2, 0);
+    //   cBg.lineTo(n - step / 2, 4);
+    //   cBg.lineTo(n - step / 2 - 2, 2);
+    //   cBg.lineTo(n - step, 0);
+    // }
+    // cBg.lineTo(0, canvasSize);
+    // cBg.lineTo(canvasSize, canvasSize);
+    // cBg.lineTo(canvasSize, 0);
+    // cBg.lineTo(0, 0);
     cBg.stroke();
   }
   function drawGrid() {
@@ -86,7 +125,6 @@ window.onload = function snake() {
     canvasBg.height = canvasSize;
     canvasWrapper.style.width = canvasSize + "px";
     canvasWrapper.style.height = canvasSize + "px";
-    applyBorderAndGrid();
   }
 
   function decideCanvasSizeByScreen(windowWidth, stepsCount) {
