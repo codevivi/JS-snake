@@ -6,6 +6,20 @@ window.onload = function snake() {
   const closeSettingsBtn = document.getElementById("close-settings");
   const openSettingsBtn = document.getElementById("open-settings");
   const overCanvas = document.getElementById("over-canvas-id");
+  const settings = document.getElementById("settings-id");
+  const screen = document.getElementById("screen-id");
+  const msgEl = document.getElementById("screed-msg-id");
+  //settings
+  const gridOnOffBtn = document.getElementById("grid-on-off");
+  const gridToggler = document.getElementById("grid-toggler");
+  const soundOnOffBtn = document.getElementById("sound-on-off");
+  const soundToggler = document.getElementById("sound-toggler");
+  const borderOnOffBtn = document.getElementById("border-on-off");
+  const borderToggler = document.getElementById("border-toggler");
+  const saveOnOffBtn = document.getElementById("save-on-off");
+  const saveToggler = document.getElementById("save-toggler");
+  const speedSelect = document.getElementById("set-speed");
+  const speedOptions = document.getElementsByTagName("option");
 
   const stepsCount = 15;
   const c = canvas.getContext("2d");
@@ -20,33 +34,110 @@ window.onload = function snake() {
   let step;
   let resizeTimeout;
 
+  let msg = "";
+
   ///settings variables
   let isPlaying = false;
   let isPaused = false;
-  let isGrid = true;
-  let isBorder = true;
-  let isSound = false;
+  let isSaveOn = Number(localStorage.getItem("save")) || 0;
 
+  let isGrid = Number(localStorage.getItem("grid")) || 0;
+  let isBorder = Number(localStorage.getItem("border")) || 0;
+  let speed = Number(localStorage.getItem("speed")) || 4; //steps per second
+  let isSound = Number(localStorage.getItem("sound")) || 0;
+  isSaveOn && saveToggler.classList.toggle("on");
+  isGrid && gridToggler.classList.toggle("on");
+  isBorder && borderToggler.classList.toggle("on");
+  isSound && soundToggler.classList.toggle("on");
+  speedOptions[speed - 1].selected = "selected";
+
+  //adjustSettingsButtonsAppearance();
+
+  let record = Number(localStorage.getItem("record")) || 0;
+  let snake;
   resizeCanvas();
-
-  overCanvas.style.display = "none";
-
-  window.addEventListener("resize", resizeOptimally);
   applyBorderAndGrid();
-  closeSettingsBtn.addEventListener("click", function () {
+
+  function gameSetup() {
+    window.removeEventListener("resize", resizeOptimally);
+    openSettingsBtn.style.display = "none";
     overCanvas.style.display = "none";
+  }
+  function outOfGameSetup() {
+    window.addEventListener("resize", resizeOptimally);
+    overCanvas.style.display = "flex";
+    msgEl.textContent = msg;
+  }
+
+  //  overCanvas.style.display = "none";
+
+  closeSettingsBtn.addEventListener("click", function () {
+    settings.style.display = "none";
+    screen.style.display = "block";
   });
 
   openSettingsBtn.addEventListener("click", function () {
     overCanvas.style.display = "flex";
+    settings.style.display = "flex";
+    screen.style.display = "none";
   });
+  gridOnOffBtn.addEventListener("click", toggleGrid);
+  borderOnOffBtn.addEventListener("click", toggleBorder);
+  saveOnOffBtn.addEventListener("click", toggleSave);
+  soundOnOffBtn.addEventListener("click", toggleSound);
+  speedSelect.addEventListener("change", setSpeed);
+  function setSpeed() {
+    speed = speedSelect.value;
+    localStorage.getItem("save") && localStorage.setItem("speed", speed);
+  }
+  function toggleSave() {
+    if (isSaveOn) {
+      isSaveOn = 0;
+      localStorage.clear();
+    } else {
+      isSaveOn = 1;
+      localStorage.setItem("save", isSaveOn);
+      localStorage.setItem("grid", isGrid);
+      localStorage.setItem("border", isBorder);
+      localStorage.setItem("sound", isSound);
+      localStorage.setItem("speed", speed);
+    }
+    saveToggler.classList.toggle("on");
+  }
   function toggleGrid() {
-    isGrid = isGrid ? !isGrid : isGrid;
+    if (isGrid) {
+      isGrid = 0;
+      localStorage.getItem("grid") && localStorage.setItem("grid", "0");
+    } else {
+      isGrid = 1;
+      localStorage.getItem("grid") && localStorage.setItem("grid", "1");
+    }
+    gridToggler.classList.toggle("on");
+
+    applyBorderAndGrid();
   }
   function toggleBorder() {
-    isBorder = isBorder ? !isBorder : isBorder;
-  }
+    if (isBorder) {
+      isBorder = 0;
+      localStorage.getItem("border") && localStorage.setItem("border", "0");
+    } else {
+      isBorder = 1;
+      localStorage.getItem("border") && localStorage.setItem("border", "1");
+    }
+    borderToggler.classList.toggle("on");
 
+    applyBorderAndGrid();
+  }
+  function toggleSound() {
+    if (isSound) {
+      isSound = 0;
+      localStorage.getItem("sound") && localStorage.setItem("sound", "0");
+    } else {
+      isBorder = 1;
+      localStorage.getItem("sound") && localStorage.setItem("sound", "1");
+    }
+    soundToggler.classList.toggle("on");
+  }
   /////// drawing functions
   function drawBorder() {
     let lineWidth = 2;
@@ -154,3 +245,9 @@ window.onload = function snake() {
     }
   }
 };
+function adjustSettingsButtonsAppearance() {
+  isSaveOn && saveToggler.classList.toggle("on");
+  isGrid && gridToggler.classList.toggle("on");
+  isBorder && borderToggler.classList.toggle("on");
+  isSound && soundToggler.classList.toggle("on");
+}
