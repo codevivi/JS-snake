@@ -8,7 +8,8 @@ window.onload = function snake() {
   const overCanvas = document.getElementById("over-canvas-id");
   const settings = document.getElementById("settings-id");
   const screen = document.getElementById("screen-id");
-  const msgEl = document.getElementById("screed-msg-id");
+  const msgEl = document.getElementById("screen-msg-id");
+
   //settings
   const gridOnOffBtn = document.getElementById("grid-on-off");
   const gridToggler = document.getElementById("grid-toggler");
@@ -20,56 +21,198 @@ window.onload = function snake() {
   const saveToggler = document.getElementById("save-toggler");
   const speedSelect = document.getElementById("set-speed");
   const speedOptions = document.getElementsByTagName("option");
+  const scoreDisp = document.getElementById("score-display");
+  const lengthDisp = document.getElementById("length-display");
+  const recordDisp = document.getElementById("record-display");
+  const speedDisp = document.getElementById("speed-display");
+
+  //resources
+  const rabbitImg = document.getElementById("rabbit_img");
+  const mouseImg = document.getElementById("mouse_img");
+  const bloodImg = document.getElementById("blood_img");
+  const deathSound = new Sound("resources/sounds/death_sound.mp3");
+  const rabbitSound = new Sound("resources/sounds/eat_rabbit_sound.mp3");
+  const musicSound = new Sound("resources/sounds/disco.mp3");
+  musicSound.sound.setAttribute("loop", true);
+  musicSound.sound.volume = 0.1;
+  const mouseSoundsArr = [
+    new Sound("resources/sounds/eat_mouse_sound.mp3"),
+    new Sound("resources/sounds/eat_mouse_sound.mp3"),
+  ];
+  let mouseSound = (function (i) {
+    //closure to toggle between sounds (to play sound in case two mouses eaten one after another)
+    return function () {
+      i = i ? 0 : 1;
+      return mouseSoundsArr[i];
+    };
+  })(0);
 
   const stepsCount = 15;
   const c = canvas.getContext("2d");
   const cBg = canvasBg.getContext("2d");
 
-  const gridColor = "rgb(50, 50, 50)";
-  const borderColor = "rgb(248, 55, 31)";
-  const snakeColor = "rgb(71, 255, 82)";
+  const gridColor = "rgb(56, 56, 56)";
+  const borderColor = "rgb(125, 249, 255)";
+  const snakeColor = "rgba(71, 255, 82, 0.5)";
+
+  const initialMsg = `Press ENTER to start
+
+  To Pause press SPACE BAR
+
+  Move with ARROW keys
+  or H, J, K, L
+    (VIM style)`;
+
+  const pauseMsg = `PAUSED
+
+  Press SPACE BAR to play`;
+
+  const gameOverMsg = `GAME OVER
+
+  Press ENTER to play again.`;
+
+  const gameOverRecordMsg = `CONGRATULATIONS!
+
+  You have reached new RECORD.`;
 
   let wW; //windowWidth
   let canvasSize;
   let step;
   let resizeTimeout;
+  let gameIntervalID;
 
-  let msg = "";
+  let msg = initialMsg;
 
   ///settings variables
   let isPlaying = false;
   let isPaused = false;
   let isSaveOn = Number(localStorage.getItem("save")) || 0;
 
+  //main game variables
+  let score = 0;
   let isGrid = Number(localStorage.getItem("grid")) || 0;
   let isBorder = Number(localStorage.getItem("border")) || 0;
   let speed = Number(localStorage.getItem("speed")) || 4; //steps per second
   let isSound = Number(localStorage.getItem("sound")) || 0;
+  let record = Number(localStorage.getItem("record")) || 0;
   isSaveOn && saveToggler.classList.toggle("on");
   isGrid && gridToggler.classList.toggle("on");
   isBorder && borderToggler.classList.toggle("on");
   isSound && soundToggler.classList.toggle("on");
   speedOptions[speed - 1].selected = "selected";
+  showInitialStatus();
 
   //adjustSettingsButtonsAppearance();
 
-  let record = Number(localStorage.getItem("record")) || 0;
   let snake;
-  resizeCanvas();
-  applyBorderAndGrid();
 
+  //////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  resizeCanvas();
+  applyBorder();
+  applyGrid();
+  outOfGameSetup();
+  gridOnOffBtn.addEventListener("click", toggleGrid);
+  borderOnOffBtn.addEventListener("click", toggleBorder);
+  saveOnOffBtn.addEventListener("click", toggleSave);
+  soundOnOffBtn.addEventListener("click", toggleSound);
+  speedSelect.addEventListener("change", setSpeed);
+  window.addEventListener("keydown", control, false);
+
+  function newGame() {
+    clearInterval(gameIntervalID);
+    gameSetup();
+    c.clearRect(0, 0, canvasSize, canvasSize);
+    snake = new Snake();
+    gameIntervalID = setInterval(update, 1000 / snake.speed);
+  }
+  function update() {
+    snake.move();
+    adjustStatus();
+    // let date = new Date();
+    // let now = date.getSeconds();
+    // console.log(now);
+  }
+
+  function pauseUnpause() {
+    if (snake.isDead) {
+      return;
+    }
+    if (!isPaused) {
+      clearInterval(gameIntervalID);
+      isPaused = true;
+      msgEl.textContent = pauseMsg;
+      overCanvas.style.display = "flex";
+      screen.style.display = "flex";
+    } else {
+      gameIntervalID = setInterval(update, 1000 / snake.speed);
+      isPaused = false;
+      overCanvas.style.display = "none";
+      screen.style.display = "none";
+    }
+  }
+  function control(evt) {
+    switch (evt.code) {
+      case "Enter":
+        newGame();
+        break;
+      case "ArrowUp":
+      case "KeyK":
+        if (!snake.dirY) {
+          //to prevent from moving backwards
+          snake.getNewHeadPosition = snake.headUp;
+        }
+        break;
+      case "ArrowDown":
+      case "KeyJ":
+        if (!snake.dirY) {
+          //to prevent from moving backwards
+          snake.getNewHeadPosition = snake.headDown;
+        }
+        break;
+      case "ArrowLeft":
+      case "KeyH":
+        if (!snake.dirX) {
+          //to prevent from moving backwards
+          snake.getNewHeadPosition = snake.headLeft;
+        }
+        break;
+      case "ArrowRight":
+      case "KeyL":
+        if (!snake.dirX) {
+          //to prevent from moving backwards
+          snake.getNewHeadPosition = snake.headRight;
+        }
+        break;
+      case "Space":
+        pauseUnpause();
+        break;
+    }
+  }
+  function showInitialStatus() {
+    speedDisp.textContent = speed;
+    recordDisp.textContent = record;
+    lengthDisp.textContent = length;
+    scoreDisp.textContent = score;
+  }
+  function adjustStatus() {
+    speedDisp.textContent = snake.speed;
+    lengthDisp.textContent = snake.body.length;
+    scoreDisp.textContent = snake.score;
+  }
   function gameSetup() {
     window.removeEventListener("resize", resizeOptimally);
     openSettingsBtn.style.display = "none";
     overCanvas.style.display = "none";
+    isSound && musicSound.play();
   }
   function outOfGameSetup() {
+    openSettingsBtn.style.display = "block";
     window.addEventListener("resize", resizeOptimally);
     overCanvas.style.display = "flex";
     msgEl.textContent = msg;
+    isSound && musicSound.stop();
   }
-
-  //  overCanvas.style.display = "none";
 
   closeSettingsBtn.addEventListener("click", function () {
     settings.style.display = "none";
@@ -81,11 +224,7 @@ window.onload = function snake() {
     settings.style.display = "flex";
     screen.style.display = "none";
   });
-  gridOnOffBtn.addEventListener("click", toggleGrid);
-  borderOnOffBtn.addEventListener("click", toggleBorder);
-  saveOnOffBtn.addEventListener("click", toggleSave);
-  soundOnOffBtn.addEventListener("click", toggleSound);
-  speedSelect.addEventListener("change", setSpeed);
+
   function setSpeed() {
     speed = speedSelect.value;
     localStorage.getItem("save") && localStorage.setItem("speed", speed);
@@ -114,7 +253,7 @@ window.onload = function snake() {
     }
     gridToggler.classList.toggle("on");
 
-    applyBorderAndGrid();
+    applyGrid();
   }
   function toggleBorder() {
     if (isBorder) {
@@ -126,62 +265,20 @@ window.onload = function snake() {
     }
     borderToggler.classList.toggle("on");
 
-    applyBorderAndGrid();
+    applyBorder();
   }
   function toggleSound() {
     if (isSound) {
       isSound = 0;
       localStorage.getItem("sound") && localStorage.setItem("sound", "0");
     } else {
-      isBorder = 1;
+      isSound = 1;
       localStorage.getItem("sound") && localStorage.setItem("sound", "1");
     }
     soundToggler.classList.toggle("on");
   }
   /////// drawing functions
-  function drawBorder() {
-    let lineWidth = 2;
-    cBg.lineWidth = lineWidth;
-    cBg.strokeStyle = borderColor;
-    cBg.beginPath();
-    cBg.moveTo(0, 0);
-    let b;
-    for (let y = 0; y <= canvasSize - step; y += step) {
-      cBg.lineTo(0, y + step / 2 - 2);
-      cBg.lineTo(4, y + step / 2 + 2);
-      cBg.lineTo(0, y + step / 2 + 2);
-      cBg.lineTo(0, y + step);
-    }
-    for (let x = 0; x <= canvasSize - step; x += step) {
-      cBg.lineTo(x + step / 2 - 2, canvasSize);
-      cBg.lineTo(x + step / 2 + 2, canvasSize - 4);
-      cBg.lineTo(x + step / 2 + 2, canvasSize);
-      cBg.lineTo(x + step, canvasSize);
-    }
-    for (let y = canvasSize; y !== 0; y -= step) {
-      cBg.lineTo(canvasSize, y - step / 2 + 2);
-      cBg.lineTo(canvasSize - 4, y - step / 2 - 2);
-      cBg.lineTo(canvasSize, y - step / 2 - 2);
-      cBg.lineTo(canvasSize, y - step);
-    }
-    for (let x = canvasSize; x !== 0; x -= step) {
-      cBg.lineTo(x - step / 2 + 2, 0);
-      cBg.lineTo(x - step / 2 - 2, 4);
-      cBg.lineTo(x - step / 2 - 2, 0);
-      cBg.lineTo(x - step, 0);
-    }
-    // for (let n = canvasSize; n !== 0; n -= step) {
-    //   cBg.lineTo(n - step / 2 - 2, 0);
-    //   cBg.lineTo(n - step / 2, 4);
-    //   cBg.lineTo(n - step / 2 - 2, 2);
-    //   cBg.lineTo(n - step, 0);
-    // }
-    // cBg.lineTo(0, canvasSize);
-    // cBg.lineTo(canvasSize, canvasSize);
-    // cBg.lineTo(canvasSize, 0);
-    // cBg.lineTo(0, 0);
-    cBg.stroke();
-  }
+
   function drawGrid() {
     let lineWidth = 1;
     if (isGrid) {
@@ -190,7 +287,7 @@ window.onload = function snake() {
         cBg.strokeStyle = gridColor;
         cBg.beginPath();
         cBg.moveTo(n, 0);
-        cBg.lineTo(n, canvasSize);
+        cBg.lineTo(n, canvasSize + 0);
         cBg.stroke();
         cBg.beginPath();
         cBg.moveTo(0, n);
@@ -198,6 +295,10 @@ window.onload = function snake() {
         cBg.stroke();
       }
     }
+  }
+  function drawSquare(x, y, fillColor) {
+    c.fillStyle = fillColor;
+    c.fillRect(x + 2, y + 2, step - 4, step - 4);
   }
   /////// drawing functions
 
@@ -235,19 +336,249 @@ window.onload = function snake() {
     step = size / stepsCount;
     return [size, step];
   }
-  function applyBorderAndGrid() {
-    cBg.clearRect(0, 0, canvasSize, canvasSize);
+  function applyGrid() {
     if (isGrid) {
       drawGrid();
+    } else {
+      cBg.clearRect(0, 0, canvasSize, canvasSize);
     }
+  }
+  function applyBorder() {
     if (isBorder) {
-      drawBorder();
+      canvasWrapper.style.border = "4px double rgb(125, 249, 255)";
+    } else {
+      canvasWrapper.style.border = "none";
+    }
+  }
+  function adjustSettingsButtonsAppearance() {
+    isSaveOn && saveToggler.classList.toggle("on");
+    isGrid && gridToggler.classList.toggle("on");
+    isBorder && borderToggler.classList.toggle("on");
+    isSound && soundToggler.classList.toggle("on");
+  }
+  function Sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+
+    this.play = function () {
+      this.sound.play();
+    };
+    this.stop = function () {
+      this.sound.pause();
+    };
+  }
+  class Snake {
+    constructor() {
+      // this.speed = Number(localStorage.getItem("speed")) || 4; //steps per second
+      this.speed = speed;
+      this.score = 0;
+      this.isDead = false;
+      this.deathSound = deathSound;
+      this.partsToGrow = 0;
+      this.timeToGrow = false;
+      this.body = [
+        [3 * step, 0],
+        [2 * step, 0],
+        [step, 0],
+        [0, 0],
+      ];
+      this.foodsInBelly = [];
+      this.dirX = true; // to prevent moving backwards on direction change
+      this.dirY = false; //to prevent moving backwards on direction change
+      this.getNewHeadPosition = this.headRight; //sets initial moving direction
+      this.drawAll();
+    }
+    get head() {
+      return { x: this.body[0][0], y: this.body[0][1] };
+    }
+    get tail() {
+      return {
+        x: this.body[this.body.length - 1][0],
+        y: this.body[this.body.length - 1][1],
+      };
+    }
+    findFood(newHead) {
+      Food.storage.forEach((food, i) => {
+        if (food.x === newHead[0] && food.y === newHead[1]) {
+          this.foodsInBelly.push(food);
+          Food.storage.splice(i, i + 1);
+          food.getsEaten();
+        }
+      });
+    }
+    checkIfFinishedDigesting(tail) {
+      if (this.foodsInBelly.length > 0) {
+        let firstInBelly = this.foodsInBelly[0];
+        if (tail.x === firstInBelly.x && tail.y === firstInBelly.y) {
+          this.foodsInBelly.shift();
+          return true;
+        }
+      }
+
+      return false;
+    }
+    headRight() {
+      this.dirX = true;
+      this.dirY = false;
+      let headX = this.head.x;
+      let headY = this.head.y;
+      let newHeadX = headX + step;
+      if (!isBorder) {
+        if (headX === canvasSize - step) {
+          newHeadX = 0;
+        }
+      }
+      return [newHeadX, headY];
+    }
+    headLeft() {
+      this.dirX = true;
+      this.dirY = false;
+      let headX = this.head.x;
+      let headY = this.head.y;
+      let newHeadX = headX - step;
+      if (!isBorder) {
+        if (headX === 0) {
+          newHeadX = headX + step * 15 - step;
+        }
+      }
+      return [newHeadX, headY];
+    }
+    headDown() {
+      this.dirX = false;
+      this.dirY = true;
+      let headX = this.head.x;
+      let headY = this.head.y;
+      let newHeadY = headY + step;
+      if (!isBorder) {
+        if (headY === canvasSize - step) {
+          newHeadY = 0;
+        }
+      }
+      return [headX, newHeadY];
+    }
+    headUp() {
+      this.dirX = false;
+      this.dirY = true;
+      let headX = this.head.x;
+      let headY = this.head.y;
+      let newHeadY = headY - step;
+      if (!isBorder) {
+        if (headY === 0) {
+          newHeadY = headY + step * 15 - step;
+        }
+      }
+      return [headX, newHeadY];
+    }
+    move() {
+      let newHead = this.getNewHeadPosition();
+      if (this.findCollision(newHead)) {
+        this.die();
+        return;
+      }
+      this.body.unshift(newHead);
+      this.drawHead();
+
+      this.clearTail();
+      this.body.pop();
+      // this.findFood(newHead);
+      // this.body.unshift(newHead);
+      // this.drawHead();
+      // if (!this.checkIfFinishedDigesting(this.tail)) {
+      //   this.clearTail();
+      //   this.body.pop();
+      // } else {
+      //   this.clearTail();
+      //   this.drawTail();
+      // }
+    }
+    findCollision(newHead) {
+      let len = this.body.length;
+      let newHeadX = newHead[0];
+      let newHeadY = newHead[1];
+      let headX = this.head.x;
+      let headY = this.head.y;
+
+      if (len > 3) {
+        for (let i = 3; i < len; i++) {
+          if (snake.body[i][0] === newHeadX && snake.body[i][1] === newHeadY) {
+            snake.drawBlood(headX, newHeadX, headY, newHeadY);
+            return true;
+          }
+        }
+      }
+      if (isBorder) {
+        if (
+          newHeadX >= canvasSize ||
+          newHeadX < 0 ||
+          newHeadY >= canvasSize ||
+          newHeadY < 0
+        ) {
+          snake.drawBlood(headX, newHeadX, headY, newHeadY);
+          return true;
+        }
+      }
+      return false;
+    }
+    die() {
+      isSound && this.deathSound.play();
+      this.isDead = true;
+      if (record < this.score) {
+        record = this.score;
+        if (isSaveOn) {
+          localStorage.setItem("record", record);
+        }
+        msg = gameOverRecordMsg;
+      } else {
+        msg = gameOverMsg;
+      }
+      clearInterval(gameIntervalID);
+      outOfGameSetup();
+    }
+    clearTail() {
+      c.clearRect(this.tail.x, this.tail.y, step + 2, step + 2);
+    }
+    drawAll() {
+      this.body.forEach(function (bodyPart) {
+        drawSquare(bodyPart[0], bodyPart[1], snakeColor);
+      });
+    }
+    drawHead() {
+      drawSquare(this.head.x, this.head.y, snakeColor);
+    }
+    drawBlood(headX, newHeadX, headY, newHeadY) {
+      let x;
+      let y;
+      let w;
+      let h;
+      c.fillStyle = "rgb(248, 55, 31)";
+      if (newHeadY === headY) {
+        if (newHeadX > headX) {
+          x = headX + step - step / 3;
+        } else {
+          x = headX;
+        }
+        y = headY;
+        w = step / 3;
+        h = step;
+      }
+      if (newHeadX === headX) {
+        if (newHeadY > headY) {
+          y = headY + step - step / 3;
+        } else {
+          y = headY;
+        }
+        x = headX;
+        w = step;
+        h = step / 3;
+      }
+      c.fillRect(x + 2, y + 2, w - 4, h - 4);
+    }
+    drawTail() {
+      drawSquare(this.tail.x, this.tail.y, snakeColor);
     }
   }
 };
-function adjustSettingsButtonsAppearance() {
-  isSaveOn && saveToggler.classList.toggle("on");
-  isGrid && gridToggler.classList.toggle("on");
-  isBorder && borderToggler.classList.toggle("on");
-  isSound && soundToggler.classList.toggle("on");
-}

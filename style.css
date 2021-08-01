@@ -15,17 +15,21 @@
     align-items: center;
     justify-content: center;
     background-image: url(resources/images/snake-right.png);
-    background-size: 200px;
+    background-size: 150px;
     background-repeat: no-repeat;
-    background-position: center bottom;
+    background-position: right 16px;
     font-family: 'Courier New', Courier, monospace;
+    /* margin-bottom: -2em; */
+    padding-bottom: 1em;
 }
+
+
 
 .title {
     float: left;
     color: rgb(71, 255, 82);
     display: block;
-    text-emphasis: 'v'rgb(248, 55, 31);
+    text-emphasis: 'v'rgb(125, 249, 255);
     height: 1rem;
     position: fixed;
     top: 0;
@@ -48,6 +52,9 @@
 .wrapper-for-canvas {
     position: relative;
     z-index: 10;
+    /* border: 4px double rgb(125, 249, 255); */
+    box-sizing: content-box;
+
 }
 
 .canvas-main {
@@ -57,22 +64,26 @@
     left: 0;
     right: 0;
     z-index: 9;
-    opacity: 0.5;
+    box-sizing: content-box;
+    /* opacity: 0.5; */
 }
 
 .canvas-bg {
+    box-sizing: content-box;
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: black;
+    background-color: rgb(40, 42, 43);
     z-index: 8;
+    /* border: 5px double rgb(125, 249, 255); */
+
 }
 
 .over-canvas {
     position: absolute;
-    background-color: rgb(38, 37, 37);
+    /* background-color: rgb(38, 37, 37); */
     background-color: transparent;
     top: 0;
     left: 0;
@@ -86,10 +97,9 @@
 }
 
 .screen {
-    background-color: transparent;
     background-color: rgba(37, 37, 38, 0.8);
-    padding: 1em;
-    display: block;
+    padding: 0.5em;
+    display: flex;
 }
 
 .screen-msg {
@@ -113,13 +123,23 @@
 }
 
 .display p {
-    margin: 0 1em;
+    margin: 0 0.2em;
     font-size: 0.7em;
+    width: 5em;
+    background-color: rgba(37, 37, 38, 0.8);
+
+}
+
+.display-value {
+    display: block;
+    padding-top: 0.2em;
+    padding-right: 0.1em;
 }
 
 .disp-svg {
     width: 12px;
     height: 12px;
+    float: left;
 }
 
 @media all and (min-width: 525px) {
@@ -138,12 +158,12 @@
 
 .settings {
     color: white;
-    padding: 1em;
+    padding: 1sem;
     display: none;
     background-color: rgb(38, 37, 37);
-    width: 80%;
+    width: 84%;
     font-size: 0.9em;
-    height: 80%;
+    height: 84%;
     align-items: center;
     justify-content: center;
 }
@@ -179,8 +199,8 @@
 }
 
 .settings-title {
-    margin-bottom: 1.6em;
-    font-size: 1.2em;
+    margin-bottom: 1.1em;
+    font-size: 1.1em;
 }
 
 .button-field {
@@ -237,4 +257,43 @@ select option {
 .on {
     background-color: rgb(71, 255, 82);
     left: 23px;
+}
+
+.footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: rgb(107, 105, 105);
+
+}
+
+.footer,
+p {
+    font-weight: 2em;
+
+}
+
+.footer {
+    color: #687b91;
+    text-align: center;
+    font-size: 0.8em;
+    margin-top: 3.8rem;
+    padding: 1em;
+}
+
+.github-link {
+    display: block;
+    margin: auto;
+    border-radius: 50%;
+    color: #687b91;
+    text-decoration: none;
+
+}
+
+
+.github-link>img {
+    margin: auto;
+    width: 32px;
+    height: 32px;
 }
