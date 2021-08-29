@@ -1,41 +1,48 @@
 * {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 
 .body {
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    background-color: #1E1E1E;
-    text-align: center;
-    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
-    justify-content: center;
+    background-color: #1E1E1E;
     background-image: url(resources/images/snake-right.png);
-    background-size: 150px;
-    background-repeat: no-repeat;
     background-position: right 16px;
+    background-repeat: no-repeat;
+    background-size: 150px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     font-family: 'Courier New', Courier, monospace;
-    /* margin-bottom: -2em; */
+    height: 100%;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    min-height: 100vh;
     padding-bottom: 1em;
+    text-align: center;
+    width: 100%;
 }
 
 
 
 .title {
-    float: left;
     color: rgb(71, 255, 82);
     display: block;
-    text-emphasis: 'v'rgb(125, 249, 255);
+    float: left;
+    font-size: 1.2rem;
     height: 1rem;
-    position: fixed;
-    top: 0;
     left: 0;
     padding: 1rem;
-    font-size: 1.2rem;
+    position: fixed;
+    -webkit-text-emphasis: 'v'rgb(125, 249, 255);
+    text-emphasis: 'v'rgb(125, 249, 255);
+    top: 0;
 
 }
 
@@ -50,56 +57,60 @@
 }
 
 .wrapper-for-canvas {
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
     position: relative;
     z-index: 10;
-    /* border: 4px double rgb(125, 249, 255); */
-    box-sizing: content-box;
-
 }
 
 .canvas-main {
-    position: absolute;
     bottom: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9;
+    -webkit-box-sizing: content-box;
     box-sizing: content-box;
-    /* opacity: 0.5; */
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 9;
 }
 
 .canvas-bg {
-    box-sizing: content-box;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
     background-color: rgb(40, 42, 43);
+    bottom: 0;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
     z-index: 8;
-    /* border: 5px double rgb(125, 249, 255); */
-
 }
 
 .over-canvas {
-    position: absolute;
-    /* background-color: rgb(38, 37, 37); */
-    background-color: transparent;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 10;
-    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    background-color: transparent;
+    bottom: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
-
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
 }
 
 .screen {
     background-color: rgba(37, 37, 38, 0.8);
-    padding: 0.5em;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    padding: 0.5em;
 }
 
 .screen-msg {
@@ -108,107 +119,135 @@
 }
 
 .display {
-    position: absolute;
-    top: -2em;
-    left: 0;
-    width: 100%;
-    height: 2em;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
     background-color: rgb(37, 37, 38);
     background-color: transparent;
-    margin: 0.2em 0;
-    display: inline-flex;
-    align-items: flex-start;
-    justify-content: flex-start;
     color: rgb(107, 105, 105);
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    height: 2em;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    left: 0;
+    margin: 0.2em 0;
+    position: absolute;
+    top: -2em;
+    width: 100%;
 }
 
 .display p {
-    margin: 0 0.2em;
-    font-size: 0.7em;
-    width: 5em;
     background-color: rgba(37, 37, 38, 0.8);
-
+    color: rgba(71, 255, 82, 1);
+    font-size: 0.7em;
+    margin: 0 0.2em;
+    width: 5em;
 }
 
 .display-value {
     display: block;
-    padding-top: 0.2em;
     padding-right: 0.1em;
+    padding-top: 0.2em;
 }
 
 .disp-svg {
-    width: 12px;
-    height: 12px;
     float: left;
+    height: 12px;
+    width: 12px;
 }
 
 @media all and (min-width: 525px) {
 
     .display p {
-        margin: 0 1em;
         font-size: 1em;
+        margin: 0 1em;
     }
 
     .disp-svg {
-        width: 24px;
         height: 24px;
+        width: 24px;
     }
 }
 
 
 .settings {
-    color: white;
-    padding: 1sem;
-    display: none;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
     background-color: rgb(38, 37, 37);
-    width: 84%;
+    color: white;
+    display: none;
     font-size: 0.9em;
     height: 84%;
-    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    padding: 1em;
+    width: 84%;
 }
 
 
 .settings-button {
-    width: 2.5em;
-    height: 2.5em;
-    display: block;
-    position: absolute;
-    color: white;
-    border: none;
-    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
     border-radius: 5px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: block;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    height: 2.5em;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    outline: none;
+    position: absolute;
+    width: 2.5em;
+}
+
+button:hover,
+button:focus {
+    outline: none;
+
 }
 
 .settings-button--close {
     background-color: rgb(248, 55, 31);
-    top: -2em;
-    right: 0;
-    width: 2.6em;
     height: 2.6em;
+    right: 0;
+    top: -2em;
+    width: 2.6em;
 }
 
 .settings-button--open {
-    top: -2px;
-    right: 0;
     background-color: transparent;
-
+    right: 0;
+    top: -2px;
 }
 
 .settings-title {
-    margin-bottom: 1.1em;
     font-size: 1.1em;
+    margin-bottom: 1.1em;
 }
 
 .button-field {
-    width: 100%;
-    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
     justify-content: flex-start;
     margin: 1em 0;
+    width: 100%;
 }
 
 .button-label {
@@ -216,36 +255,35 @@
 }
 
 .toggle-button {
-    display: block;
     background-color: black;
-    width: 40px;
+    border-radius: 40%;
+    border: none;
+    display: block;
     height: 20px;
     padding: 3px;
-    border-radius: 40%;
     position: relative;
-    border: none;
+    width: 40px;
 }
 
 .toggler {
-    display: block;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
     background-color: grey;
-    position: absolute;
+    border-radius: 50%;
+    display: block;
+    height: 16px;
     left: -3px;
+    position: absolute;
     top: 0;
-
+    width: 16px;
 }
 
 select {
-    background-color: transparent;
     background-color: rgb(42, 42, 42);
-    color: rgb(71, 255, 82);
-    border: 5px solid rgb(42, 42, 42);
-    padding: 0.5rem;
+    background-color: transparent;
     border-radius: 10%;
+    border: 5px solid rgb(42, 42, 42);
+    color: rgb(71, 255, 82);
     font-size: 1.5em;
+    padding: 0.5rem;
 }
 
 select option {
@@ -260,40 +298,33 @@ select option {
 }
 
 .footer {
-    width: 100%;
-    position: absolute;
     bottom: 0;
-    left: 0;
     color: rgb(107, 105, 105);
-
+    left: 0;
+    position: absolute;
+    width: 100%;
 }
 
-.footer,
-p {
-    font-weight: 2em;
-
-}
 
 .footer {
     color: #687b91;
-    text-align: center;
     font-size: 0.8em;
     margin-top: 3.8rem;
     padding: 1em;
+    text-align: center;
 }
 
 .github-link {
-    display: block;
-    margin: auto;
     border-radius: 50%;
     color: #687b91;
+    display: block;
+    margin: auto;
     text-decoration: none;
-
 }
 
 
 .github-link>img {
+    height: 32px;
     margin: auto;
     width: 32px;
-    height: 32px;
 }
