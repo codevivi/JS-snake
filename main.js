@@ -81,7 +81,6 @@ const rabbitLifeSpanMax = 80;
 
 //main game variables
 let snake;
-let foods = [];
 let mouse;
 let rabbit;
 let rabbitBornDelay;
@@ -130,18 +129,22 @@ function newGame() {
   showInitialStatus();
   c.clearRect(0, 0, canvasSize, canvasSize);
   snake = new Snake();
-  foods.push(new Mouse(getRandomEmptyCell()));
+  mouse = new Mouse(getRandomEmptyCell());
   gameIntervalID = setInterval(update, 1000 / snake.speed);
 }
 function update() {
-  makeRabbitWithDelay();
+  console.log("start");
+  console.time("loop");
   deathAngel();
   snake.move();
   adjustStatus();
+  console.timeEnd("loop");
+  console.log("end");
+  makeRabbitWithDelay();
 }
 function makeRabbitWithDelay() {
   if (rabbitBornDelay === 0) {
-    foods.push(new Rabbit(getRandomEmptyCell()));
+    rabbit = new Rabbit(getRandomEmptyCell());
     rabbitBornDelay = null;
   } else if (rabbitBornDelay > 0) {
     rabbitBornDelay--;
@@ -425,15 +428,18 @@ class Snake {
     };
   }
   checkIfOnFood(newHead) {
-    foods.forEach((food, i) => {
-      if (food.x === newHead[0] && food.y === newHead[1]) {
-        isSound && food.dyingSound.play();
-        this.foodsInBelly.push(food);
-        foods.splice(i, i + 1);
-        food.seed();
-        food.getsEaten();
-      }
-    });
+    let food = null;
+    if (mouse.x === newHead[0] && mouse.y === newHead[1]) {
+      food = mouse;
+    } else if (rabbit?.x === newHead[0] && rabbit?.y === newHead[1]) {
+      food = rabbit;
+    }
+    if (food) {
+      isSound && food.dyingSound.play();
+      this.foodsInBelly.push(food);
+      food.seed();
+      food.getsEaten();
+    }
   }
   checkIfFinishedDigesting(tail) {
     if (this.foodsInBelly.length > 0) {
@@ -467,7 +473,7 @@ class Snake {
     let newHeadX = headX - step;
     if (!isBorder) {
       if (headX === 0) {
-        newHeadX = headX + step * 15 - step;
+        newHeadX = headX + step * stepsCount - step;
       }
     }
     return [newHeadX, headY];
@@ -493,7 +499,7 @@ class Snake {
     let newHeadY = headY - step;
     if (!isBorder) {
       if (headY === 0) {
-        newHeadY = headY + step * 15 - step;
+        newHeadY = headY + step * stepsCount - step;
       }
     }
     return [headX, newHeadY];
@@ -558,7 +564,9 @@ class Snake {
     }
     musicSound.stop();
     clearInterval(gameIntervalID);
-    foods = [];
+    mouse = null;
+    rabbit = null;
+    rabbitBornDelay = null;
     outOfGameSetup();
   }
   clearTail() {
@@ -606,19 +614,13 @@ class Snake {
 }
 function deathAngel() {
   //call every game tick to clear rabbits with finished life span
-  foods = foods.filter((food) => {
-    if (food.lifespan === null) {
-      return food;
-    } else if (food.lifeSpan > 0) {
-      food.lifeSpan -= 1;
-      return food;
-    } else {
-      // filter out , clear from canvas, and seed new
-      c.clearRect(food.x, food.y, step, step); //clear the old one
-      food.seed(); // initiate new rabbit
-      //clearTimeout(food.seedId);
-    }
-  });
+  if (rabbit && rabbit.lifeSpan > 0) {
+    rabbit.lifeSpan -= 1;
+  } else if (rabbit && rabbit.lifeSpan === 0) {
+    c.clearRect(rabbit.x, rabbit.y, step, step); //clear the old one
+    rabbit.seed(); // initiate new rabbit
+    rabbit = null;
+  }
 }
 class Mouse {
   constructor(emptyCell) {
@@ -631,7 +633,7 @@ class Mouse {
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
   }
   seed() {
-    foods.push(new Mouse(getRandomEmptyCell()));
+    mouse = new Mouse(getRandomEmptyCell());
   }
   getsEaten() {
     snake.score += this.calories;
@@ -667,9 +669,12 @@ class Rabbit {
 
 ///////////helpers
 function getRandomEmptyCell() {
-  let occupiedCellsArr = [...snake.body, ...foods.map((f) => [f.x, f.y])];
-  let randomCellX = Math.floor(Math.random() * 15) * step;
-  let randomCellY = Math.floor(Math.random() * 15) * step;
+  let occupiedCellsArr = [...snake.body];
+  mouse && occupiedCellsArr.push([mouse.x, mouse.y]);
+  rabbit && occupiedCellsArr.push([rabbit.x, rabbit.y]);
+  console.log("ocupiedCells", occupiedCellsArr);
+  let randomCellX = Math.floor(Math.random() * stepsCount) * step;
+  let randomCellY = Math.floor(Math.random() * stepsCount) * step;
   let isEmpty = true;
   for (let i = 0; i < occupiedCellsArr.length; i++) {
     if (
@@ -683,6 +688,7 @@ function getRandomEmptyCell() {
   if (!isEmpty) {
     return getRandomEmptyCell();
   } else {
+    console.log("newCell", [randomCellX, randomCellY]);
     return [randomCellX, randomCellY];
   }
 }
