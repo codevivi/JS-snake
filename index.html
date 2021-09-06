@@ -5,16 +5,28 @@
     <meta charset="UTF-8">
     <meta name="description" content="Vanilla JavaScript Snake coding project">
     <meta name="keywords" content="snake, JS, vanilla, Javascript, game, web game">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Vanilla JavaScript Snake</title>
 </head>
 
-<body class="body">
-    <h1 class="title">
-        JS Snake
-    </h1>
+<body class="body touch" data-control="Space">
+    <a href="index.html">
+        <h1 class="title">
+            JS Snake
+        </h1>
+    </a>
+
     <div id="wrapper" class="wrapper-for-canvas">
+        <div class="touch-controls">
+            <div class="touch touch-up dir" data-control="ArrowUp" id="touch-up">&uarr;</div>
+            <div class="touch-sides-wrapper">
+                <div class="touch touch-left dir" data-control="ArrowLeft" id="touch-left">&larr;</div>
+                <div class="touch touch-right dir" data-control="ArrowRight" id="touch-right">&rarr;</div>
+            </div>
+            <div class="touch touch-down dir" data-control="ArrowDown" id="touch-down">&darr;</div>
+
+        </div>
         <div class="display">
             <button title="Settings" type="button" class="settings-button settings-button--open" id="open-settings">
                 <svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,10 +73,11 @@
 
         </div>
         <canvas id="canvas-main-id" class="canvas-main">Your browser doesn't support HTML5 canvas element.</canvas>
-        <canvas class="canvas-bg" id="canvas-bg-id"></canvas>
+        <canvas class="canvas-bg" id="canvas-bg-id"> Your browser doesn't support HTML5 canvas element.</canvas>
+
         <div class="over-canvas" id="over-canvas-id">
             <div class="screen" id="screen-id">
-                <p class="screen-msg" id="screen-msg-id">Press ENTER to start</p>
+                <p class="screen-msg" class="touch" data-control="Enter" id="screen-msg-id">Press ENTER to start</p>
             </div>
             <div class="settings " id="settings-id">
                 <button type="button" class="settings-button settings-button--close" id="close-settings"><svg width="24"
@@ -118,21 +131,22 @@
             </div>
         </div>
     </div>
-
-    <footer class="footer">
-        <p><a class="github-link" href="https://github.com/codevivi/Vanilla-JavaScript-Calculator">Check it on
-                <img src="resources/images/GitHub-Mark-Light-64px.png" alt="GitHub"> GitHub</a></p>
-        <p class="license">
-            Vilma Jovaisaite &copy; 2019-
-            <script>
-                document.write(new Date().getUTCFullYear());
-            </script>
-        </p>
+    <footer class="footer touch-hidden-in-game">
+        <a href="about.html" class="about-link">About</a>
+        <div>
+            <p><a class="github-link" href="https://github.com/codevivi/Vanilla-JavaScript-Calculator">Check it on
+                    <img src="resources/images/GitHub-Mark-Light-64px.png" alt="GitHub"> GitHub</a></p>
+            <p class="license">
+                Vilma J. &copy;
+                <script>
+                    document.write(new Date().getUTCFullYear());
+                </script>
+            </p>
+        </div>
         <img class="hidden" id="rabbit_img" src="resources/images/rabbit.png" alt="rabbit" width="50" height="50" />
         <img class="hidden" id="mouse_img" src="resources/images/mouse.png" alt="mouse" width="50" height="50" />
     </footer>
-
-    <script src="main.js"> </script>
+    <script src="./main.js"> </script>
 </body>
 
 </html>

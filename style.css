@@ -9,10 +9,10 @@
 .body {
     -webkit-box-align: center;
     -ms-flex-align: center;
-    align-items: center;
+    align-items: flex-start;
     background-color: #1E1E1E;
     background-image: url(resources/images/snake-right.png);
-    background-position: right 16px;
+    background-position: right 1em;
     background-repeat: no-repeat;
     background-size: 150px;
     display: -webkit-box;
@@ -25,6 +25,7 @@
     justify-content: center;
     min-height: 100vh;
     padding-bottom: 1em;
+    padding-top: 6em;
     text-align: center;
     width: 100%;
 }
@@ -42,7 +43,7 @@
     position: fixed;
     -webkit-text-emphasis: 'v'rgb(125, 249, 255);
     text-emphasis: 'v'rgb(125, 249, 255);
-    top: 0;
+    top: 0.8em;
 
 }
 
@@ -60,7 +61,7 @@
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
     position: relative;
-    z-index: 10;
+    z-index: 8;
 }
 
 .canvas-main {
@@ -71,7 +72,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 9;
+    z-index: 7;
 }
 
 .canvas-bg {
@@ -83,7 +84,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 8;
+    z-index: 6;
 }
 
 .over-canvas {
@@ -102,7 +103,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 10;
+    z-index: 8;
 }
 
 .screen {
@@ -198,17 +199,16 @@
     border: none;
     color: white;
     cursor: pointer;
-    display: block;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    height: 2.5em;
+    height: 3em;
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
     outline: none;
     position: absolute;
-    width: 2.5em;
+    width: 3em;
 }
 
 button:hover,
@@ -218,17 +218,16 @@ button:focus {
 }
 
 .settings-button--close {
-    background-color: rgb(248, 55, 31);
-    height: 2.6em;
+    background-color: #1E1E1E;
     right: 0;
-    top: -2em;
-    width: 2.6em;
+    top: -48px;
 }
 
 .settings-button--open {
     background-color: transparent;
     right: 0;
     top: -2px;
+    top: -20px;
 }
 
 .settings-title {
@@ -287,7 +286,6 @@ select {
 }
 
 select option {
-    background-color: blue;
     font-size: 0.8em;
     padding: 0.5rem;
 }
@@ -297,21 +295,40 @@ select option {
     left: 23px;
 }
 
+/* 
 .footer {
     bottom: 0;
     color: rgb(107, 105, 105);
     left: 0;
     position: absolute;
     width: 100%;
+    text-align: left;
+} */
+
+.about-link {
+    color: rgb(125, 249, 255);
+    font-size: 1.2em;
 }
 
+.about-link:hover,
+.about-link:focus {
+    color: rgb(71, 255, 82);
+    cursor: pointer;
+}
 
 .footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
     color: #687b91;
     font-size: 0.8em;
     margin-top: 3.8rem;
     padding: 1em;
-    text-align: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    text-align: right;
 }
 
 .github-link {
@@ -327,4 +344,61 @@ select option {
     height: 32px;
     margin: auto;
     width: 32px;
+}
+
+.touch-controls {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    top: 100%;
+    left: 0;
+    background-color: #1E1E1E;
+    background-color: black;
+    background-color: transparent;
+    /* display: flex; */
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 1.2rem;
+    color: white;
+    overflow: hidden;
+    height: 160px;
+    box-sizing: border-box;
+}
+
+.touch-sides-wrapper {
+    width: 100%;
+    display: flex;
+    height: 55px;
+}
+
+.touch-up {
+    margin-top: 5px;
+}
+
+.touch-up,
+.touch-down {
+    width: 100%;
+    height: 55px;
+    background-color: rgb(42, 42, 42);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+}
+
+.touch-left {
+    margin-right: 50px;
+}
+
+.touch-left,
+.touch-right {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(42, 42, 42);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
 }

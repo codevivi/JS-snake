@@ -1,4 +1,4 @@
-"use strict";
+const body = document.getElementsByTagName("body")[0];
 const canvas = document.getElementById("canvas-main-id");
 const canvasBg = document.getElementById("canvas-bg-id");
 const canvasWrapper = document.getElementById("wrapper");
@@ -9,7 +9,15 @@ const settings = document.getElementById("settings-id");
 const screen = document.getElementById("screen-id");
 const msgEl = document.getElementById("screen-msg-id");
 
-//settings
+//touch control elements (also body, msgEl)
+const touchControlsBox = document.getElementsByClassName("touch-controls")[0];
+const touchControls = Array.from(document.getElementsByClassName("touch"));
+const touchDirControls = Array.from(document.getElementsByClassName("dir"));
+const touchHiddenInGame = Array.from(
+  document.getElementsByClassName("touch-hidden-in-game")
+);
+console.log(touchHiddenInGame);
+//settings elements
 const gridOnOffBtn = document.getElementById("grid-on-off");
 const gridToggler = document.getElementById("grid-toggler");
 const soundOnOffBtn = document.getElementById("sound-on-off");
@@ -20,7 +28,7 @@ const saveOnOffBtn = document.getElementById("save-on-off");
 const saveToggler = document.getElementById("save-toggler");
 const speedSelect = document.getElementById("set-speed");
 
-//display
+//display elementes
 const speedOptions = document.getElementsByTagName("option");
 const scoreDisp = document.getElementById("score-display");
 const lengthDisp = document.getElementById("length-display");
@@ -31,12 +39,11 @@ const speedDisp = document.getElementById("speed-display");
 const rabbitImg = document.getElementById("rabbit_img");
 const mouseImg = document.getElementById("mouse_img");
 const bloodImg = document.getElementById("blood_img");
-const deathSound = new Sound("resources/sounds/death_sound.mp3");
-const rabbitSound = new Sound("resources/sounds/eat_rabbit_sound.mp3");
-const musicSound = new Sound("resources/sounds/disco.mp3");
-musicSound.sound.setAttribute("loop", true);
-musicSound.sound.volume = 0.1;
-const mouseSoundsArr = [
+
+let musicSound = new Sound("resources/sounds/disco.mp3", 0.1, true); //src, volume, loop
+let deathSound = new Sound("resources/sounds/death_sound.mp3");
+let rabbitSound = new Sound("resources/sounds/eat_rabbit_sound.mp3");
+let mouseSoundsArr = [
   new Sound("resources/sounds/eat_mouse_sound.mp3"),
   new Sound("resources/sounds/eat_mouse_sound.mp3"),
 ];
@@ -44,29 +51,74 @@ let mouseSound = (function (i) {
   //closure to toggle between sounds (to play sound in case two mouses eaten one after another)
   return function () {
     i = i ? 0 : 1;
+    console.log(i);
     return mouseSoundsArr[i];
   };
 })(0);
+function initSounds() {
+  musicSound.init();
+  deathSound.init();
+  mouseSoundsArr[0].init();
+  mouseSoundsArr[1].init();
+  rabbitSound.init();
+}
 
-const initialMsg = `Press ENTER to start
+let touch = false;
+let initialMsg = function () {
+  if (!touch) {
+    return `Press ENTER to start
 
   To Pause press SPACE BAR
 
   Move with ARROW keys
   or H, J, K, L
     (VIM style)`;
-
-const pauseMsg = `PAUSED
+  } else {
+    return `Tap THERE to START
+    To PAUSE tap
+    outside game box`;
+  }
+};
+let pauseMsg = function () {
+  if (!touch) {
+    return `PAUSED
 
   Press SPACE BAR to play`;
+  } else {
+    return `PAUSED
 
-const gameOverMsg = `GAME OVER
+    Tap outside game box to PLAY`;
+  }
+};
+let gameOverMsg = function () {
+  if (!touch) {
+    return `GAME OVER
 
   Press ENTER to play again.`;
+  } else {
+    return `GAME OVER
+    
+    Tap THERE to play again.`;
+  }
+};
 
-const gameOverRecordMsg = `CONGRATULATIONS!
+let gameOverRecordMsg = function () {
+  if (!touch) {
+    return `CONGRATULATIONS!
 
-  You have reached new RECORD.`;
+  You have reached new RECORD:
+    ${record}
+  
+  Press ENTER to play again.`;
+  } else {
+    return `CONGRATULATIONS!
+
+  You have reached new RECORD:
+   ${record}
+    
+  Tap THERE to play again.`;
+  }
+};
 
 const stepsCount = 15;
 const c = canvas.getContext("2d");
@@ -80,16 +132,17 @@ const rabbitLifeSpanMin = 10;
 const rabbitLifeSpanMax = 80;
 
 //main game variables
+let userActive = false;
 let snake;
 let mouse;
-let rabbit;
+let rabbit = null;
 let rabbitBornDelay;
 let wW; //windowWidth
 let canvasSize;
 let step;
 let resizeTimeout = null;
 let gameIntervalID;
-let msg = initialMsg;
+let msg = initialMsg();
 let isPlaying = false;
 let isPaused = false;
 let isDead = true; //there is no snake yet
@@ -120,7 +173,16 @@ borderOnOffBtn.addEventListener("click", toggleBorder);
 saveOnOffBtn.addEventListener("click", toggleSave);
 soundOnOffBtn.addEventListener("click", toggleSound);
 speedSelect.addEventListener("change", setSpeed);
-window.addEventListener("keydown", control, false);
+window.addEventListener("keydown", control);
+msgEl.addEventListener("touchend", firstTouch);
+function firstTouch(e) {
+  e.preventDefault();
+  touch = true;
+  msgEl.removeEventListener("touchend", firstTouch);
+  window.removeEventListener("keydown", control);
+  msgEl.textContent = initialMsg();
+  touchControls.forEach((el) => el.addEventListener("touchstart", control));
+}
 
 function newGame() {
   rabbitBornDelay = randomBetween(rabbitDelayMin, rabbitDelayMax);
@@ -131,6 +193,9 @@ function newGame() {
   snake = new Snake();
   mouse = new Mouse(getRandomEmptyCell());
   gameIntervalID = setInterval(update, 1000 / snake.speed);
+  if (touch) {
+    touchDirControls.forEach((el) => (el.style.color = "white"));
+  }
 }
 function update() {
   console.log("start");
@@ -143,7 +208,8 @@ function update() {
   makeRabbitWithDelay();
 }
 function makeRabbitWithDelay() {
-  if (rabbitBornDelay === 0) {
+  if (rabbitBornDelay === 0 && mouse) {
+    //don't show on same location
     rabbit = new Rabbit(getRandomEmptyCell());
     rabbitBornDelay = null;
   } else if (rabbitBornDelay > 0) {
@@ -158,17 +224,32 @@ function pauseUnpause() {
   if (!isPaused) {
     clearInterval(gameIntervalID);
     isPaused = true;
-    msg = pauseMsg;
+    msg = pauseMsg();
     outOfGameSetup();
   } else {
     gameIntervalID = setInterval(update, 1000 / snake.speed);
     isPaused = false;
-    msg = pauseMsg;
+    msg = pauseMsg();
     gameSetup();
   }
+  console.log("pause", isPaused);
 }
 function control(evt) {
-  switch (evt.code) {
+  if (!userActive) {
+    userActive = true;
+    initSounds();
+  }
+
+  let controlCode;
+  if (!touch) {
+    controlCode = evt.code;
+  } else {
+    controlCode = evt.target.dataset.control;
+    if (controlCode.includes("Arrow")) {
+      evt.preventDefault(); // to prevent delay
+    }
+  }
+  switch (controlCode) {
     case "Enter":
       if (isDead) {
         newGame();
@@ -177,29 +258,37 @@ function control(evt) {
     case "ArrowUp":
     case "KeyK":
       if (!snake.dirY) {
-        //to prevent from moving backwards
         snake.getNewHeadPosition = snake.headUp;
+      }
+      if (touch) {
+        highlight(evt.target);
       }
       break;
     case "ArrowDown":
     case "KeyJ":
       if (!snake.dirY) {
-        //to prevent from moving backwards
         snake.getNewHeadPosition = snake.headDown;
+      }
+      if (touch) {
+        highlight(evt.target);
       }
       break;
     case "ArrowLeft":
     case "KeyH":
       if (!snake.dirX) {
-        //to prevent from moving backwards
         snake.getNewHeadPosition = snake.headLeft;
+      }
+      if (touch) {
+        highlight(evt.target);
       }
       break;
     case "ArrowRight":
     case "KeyL":
       if (!snake.dirX) {
-        //to prevent from moving backwards
         snake.getNewHeadPosition = snake.headRight;
+      }
+      if (touch) {
+        highlight(evt.target);
       }
       break;
     case "Space":
@@ -208,6 +297,10 @@ function control(evt) {
       }
       break;
   }
+}
+function highlight(el) {
+  touchDirControls.forEach((el) => (el.style.color = "white"));
+  el.style.color = "rgb(71, 255, 82)";
 }
 function showInitialStatus() {
   speedDisp.textContent = speed;
@@ -221,13 +314,24 @@ function adjustStatus() {
   scoreDisp.textContent = snake.score;
 }
 function gameSetup() {
+  if (isSound) {
+    musicSound.play();
+  }
   window.removeEventListener("resize", resizeOptimally);
   openSettingsBtn.style.display = "none";
   settings.style.display = "none";
   overCanvas.style.display = "none";
-  //isSound && musicSound.play();
+  if (touch) {
+    touchHiddenInGame.forEach((el) => (el.style.display = "none"));
+    //body.style.alignItems = "flex-start";
+    //body.style.paddingTop = "5em";
+    touchControlsBox.style.display = "flex";
+  }
 }
 function outOfGameSetup() {
+  if (isSound) {
+    musicSound.stop();
+  }
   if (!isPaused) {
     openSettingsBtn.style.display = "block";
   }
@@ -238,8 +342,12 @@ function outOfGameSetup() {
   screen.style.display = "flex";
   msgEl.textContent = msg;
   isSound && musicSound.stop();
+  if (touch && isDead) {
+    touchHiddenInGame.forEach((el) => (el.style.display = "flex"));
+    //body.style.alignItems = "center";
+    touchControlsBox.style.display = "none";
+  }
 }
-
 closeSettingsBtn.addEventListener("click", function () {
   settings.style.display = "none";
   screen.style.display = "block";
@@ -252,7 +360,7 @@ openSettingsBtn.addEventListener("click", function () {
 });
 
 function setSpeed() {
-  speed = speedSelect.value;
+  speed = Number(speedSelect.value);
   localStorage.getItem("save") && localStorage.setItem("speed", speed);
   speedDisp.textContent = speed;
 }
@@ -383,19 +491,27 @@ function adjustSettingsButtonsAppearance() {
   isBorder && borderToggler.classList.toggle("on");
   isSound && soundToggler.classList.toggle("on");
 }
-function Sound(src) {
+function Sound(src, volume = "1", loop = false) {
+  this.vol = volume;
   this.sound = document.createElement("audio");
   this.sound.src = src;
-  this.sound.setAttribute("preload", "auto");
-  this.sound.setAttribute("controls", "none");
+  this.sound.preload = true;
+  this.sound.setAttribute("controls", "true");
   this.sound.style.display = "none";
-  // document.body.appendChild(this.sound);
+  this.sound.volume = 0;
+  this.sound.loop = loop;
+  //document.body.appendChild(this.sound);
 
   this.play = function () {
     this.sound.play();
   };
   this.stop = function () {
     this.sound.pause();
+  };
+  this.init = function () {
+    this.play();
+    this.stop();
+    this.sound.volume = this.vol;
   };
 }
 class Snake {
@@ -404,6 +520,7 @@ class Snake {
     this.score = 0;
     isDead = false;
     this.deathSound = deathSound;
+    this.deathSound.sound.load();
     this.partsToGrow = 0;
     this.timeToGrow = false;
     this.body = [
@@ -431,8 +548,10 @@ class Snake {
     let food = null;
     if (mouse.x === newHead[0] && mouse.y === newHead[1]) {
       food = mouse;
-    } else if (rabbit?.x === newHead[0] && rabbit?.y === newHead[1]) {
+      mouse = null;
+    } else if (rabbit && rabbit.x === newHead[0] && rabbit.y === newHead[1]) {
       food = rabbit;
+      rabbit = null;
     }
     if (food) {
       isSound && food.dyingSound.play();
@@ -558,9 +677,9 @@ class Snake {
       if (isSaveOn) {
         localStorage.setItem("record", record);
       }
-      msg = gameOverRecordMsg;
+      msg = gameOverRecordMsg();
     } else {
-      msg = gameOverMsg;
+      msg = gameOverMsg();
     }
     musicSound.stop();
     clearInterval(gameIntervalID);
@@ -627,6 +746,7 @@ class Mouse {
     this.x = emptyCell[0];
     this.y = emptyCell[1];
     this.dyingSound = mouseSound();
+    this.dyingSound.sound.load();
     this.calories = 10; //for score
     this.look = mouseImg;
     this.lifespan = null;
@@ -637,8 +757,8 @@ class Mouse {
   }
   getsEaten() {
     snake.score += this.calories;
-    if (snake.score % 100 === 0 && snake.speed < 12) {
-      snake.speed++;
+    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 12) {
+      snake.speed += 1;
       clearInterval(gameIntervalID);
       gameIntervalID = setInterval(update, 1000 / snake.speed);
     }
@@ -650,6 +770,7 @@ class Rabbit {
     this.y = emptyCell[1];
     this.calories = 50;
     this.dyingSound = rabbitSound;
+    this.dyingSound.sound.load();
     this.look = rabbitImg;
     this.lifeSpan = randomBetween(rabbitLifeSpanMin, rabbitLifeSpanMax);
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
@@ -659,8 +780,8 @@ class Rabbit {
   }
   getsEaten() {
     snake.score += this.calories;
-    if (snake.score % 100 === 0 && snake.speed < 12) {
-      snake.speed++;
+    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 12) {
+      snake.speed += 1;
       clearInterval(gameIntervalID);
       gameIntervalID = setInterval(update, 1000 / snake.speed);
     }
