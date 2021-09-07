@@ -16,7 +16,6 @@ const touchDirControls = Array.from(document.getElementsByClassName("dir"));
 const touchHiddenInGame = Array.from(
   document.getElementsByClassName("touch-hidden-in-game")
 );
-console.log(touchHiddenInGame);
 //settings elements
 const gridOnOffBtn = document.getElementById("grid-on-off");
 const gridToggler = document.getElementById("grid-toggler");
@@ -51,7 +50,6 @@ let mouseSound = (function (i) {
   //closure to toggle between sounds (to play sound in case two mouses eaten one after another)
   return function () {
     i = i ? 0 : 1;
-    console.log(i);
     return mouseSoundsArr[i];
   };
 })(0);
@@ -147,6 +145,7 @@ let isPlaying = false;
 let isPaused = false;
 let isDead = true; //there is no snake yet
 let score = 0;
+let showLinksId = null;
 
 ///settings variables
 let isSaveOn = Number(localStorage.getItem("save")) || 0;
@@ -185,6 +184,9 @@ function firstTouch(e) {
 }
 
 function newGame() {
+  if (touch) {
+    clearTimeout(showLinksId);
+  }
   rabbitBornDelay = randomBetween(rabbitDelayMin, rabbitDelayMax);
   clearInterval(gameIntervalID);
   gameSetup();
@@ -193,18 +195,11 @@ function newGame() {
   snake = new Snake();
   mouse = new Mouse(getRandomEmptyCell());
   gameIntervalID = setInterval(update, 1000 / snake.speed);
-  if (touch) {
-    touchDirControls.forEach((el) => (el.style.color = "white"));
-  }
 }
 function update() {
-  console.log("start");
-  console.time("loop");
   deathAngel();
   snake.move();
   adjustStatus();
-  console.timeEnd("loop");
-  console.log("end");
   makeRabbitWithDelay();
 }
 function makeRabbitWithDelay() {
@@ -232,7 +227,6 @@ function pauseUnpause() {
     msg = pauseMsg();
     gameSetup();
   }
-  console.log("pause", isPaused);
 }
 function control(evt) {
   if (!userActive) {
@@ -260,17 +254,11 @@ function control(evt) {
       if (!snake.dirY) {
         snake.getNewHeadPosition = snake.headUp;
       }
-      if (touch) {
-        highlight(evt.target);
-      }
       break;
     case "ArrowDown":
     case "KeyJ":
       if (!snake.dirY) {
         snake.getNewHeadPosition = snake.headDown;
-      }
-      if (touch) {
-        highlight(evt.target);
       }
       break;
     case "ArrowLeft":
@@ -278,17 +266,11 @@ function control(evt) {
       if (!snake.dirX) {
         snake.getNewHeadPosition = snake.headLeft;
       }
-      if (touch) {
-        highlight(evt.target);
-      }
       break;
     case "ArrowRight":
     case "KeyL":
       if (!snake.dirX) {
         snake.getNewHeadPosition = snake.headRight;
-      }
-      if (touch) {
-        highlight(evt.target);
       }
       break;
     case "Space":
@@ -297,10 +279,6 @@ function control(evt) {
       }
       break;
   }
-}
-function highlight(el) {
-  touchDirControls.forEach((el) => (el.style.color = "white"));
-  el.style.color = "rgb(71, 255, 82)";
 }
 function showInitialStatus() {
   speedDisp.textContent = speed;
@@ -323,8 +301,6 @@ function gameSetup() {
   overCanvas.style.display = "none";
   if (touch) {
     touchHiddenInGame.forEach((el) => (el.style.display = "none"));
-    //body.style.alignItems = "flex-start";
-    //body.style.paddingTop = "5em";
     touchControlsBox.style.display = "flex";
   }
 }
@@ -343,9 +319,11 @@ function outOfGameSetup() {
   msgEl.textContent = msg;
   isSound && musicSound.stop();
   if (touch && isDead) {
-    touchHiddenInGame.forEach((el) => (el.style.display = "flex"));
-    //body.style.alignItems = "center";
     touchControlsBox.style.display = "none";
+    showLinksId = setTimeout(function () {
+      //timeout to prevent accidentally pressing links
+      touchHiddenInGame.forEach((el) => (el.style.display = "flex"));
+    }, 1500);
   }
 }
 closeSettingsBtn.addEventListener("click", function () {
@@ -757,7 +735,7 @@ class Mouse {
   }
   getsEaten() {
     snake.score += this.calories;
-    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 12) {
+    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 9) {
       snake.speed += 1;
       clearInterval(gameIntervalID);
       gameIntervalID = setInterval(update, 1000 / snake.speed);
@@ -780,7 +758,7 @@ class Rabbit {
   }
   getsEaten() {
     snake.score += this.calories;
-    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 12) {
+    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 9) {
       snake.speed += 1;
       clearInterval(gameIntervalID);
       gameIntervalID = setInterval(update, 1000 / snake.speed);
@@ -793,7 +771,6 @@ function getRandomEmptyCell() {
   let occupiedCellsArr = [...snake.body];
   mouse && occupiedCellsArr.push([mouse.x, mouse.y]);
   rabbit && occupiedCellsArr.push([rabbit.x, rabbit.y]);
-  console.log("ocupiedCells", occupiedCellsArr);
   let randomCellX = Math.floor(Math.random() * stepsCount) * step;
   let randomCellY = Math.floor(Math.random() * stepsCount) * step;
   let isEmpty = true;
@@ -809,7 +786,6 @@ function getRandomEmptyCell() {
   if (!isEmpty) {
     return getRandomEmptyCell();
   } else {
-    console.log("newCell", [randomCellX, randomCellY]);
     return [randomCellX, randomCellY];
   }
 }
