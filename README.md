@@ -7,7 +7,4 @@ My goal was to implement some functionality from
                 nostalgic
                 Nokia 'Snake' game.
 <br>
-<!-- [Check it live](https://calculator.codevivi.com/) -->
-<br>
-<!-- ![alt calculator screenshot](./calculator_600_800.png) -->
-<!-- ![alt tests screenshot](./calc_tests_600_800.png) -->
+[Check it live](https://snake.codevivi.com/)
