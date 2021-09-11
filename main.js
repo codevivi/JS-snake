@@ -478,7 +478,7 @@ function Sound(src, volume = "1", loop = false) {
   this.sound.style.display = "none";
   this.sound.volume = 0;
   this.sound.loop = loop;
-  //document.body.appendChild(this.sound);
+  document.body.appendChild(this.sound);
 
   this.play = function () {
     this.sound.play();
