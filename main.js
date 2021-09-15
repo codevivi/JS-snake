@@ -39,28 +39,18 @@ const rabbitImg = document.getElementById("rabbit_img");
 const mouseImg = document.getElementById("mouse_img");
 const bloodImg = document.getElementById("blood_img");
 
-let musicSound = new Sound("resources/sounds/disco.mp3", 0.1, true); //src, volume, loop
-let deathSound = new Sound("resources/sounds/death_sound.mp3");
-let rabbitSound = new Sound("resources/sounds/eat_rabbit_sound.mp3");
-let mouseSoundsArr = [
-  new Sound("resources/sounds/eat_mouse_sound.mp3"),
-  new Sound("resources/sounds/eat_mouse_sound.mp3"),
-];
-let mouseSound = (function (i) {
-  //closure to toggle between sounds (to play sound in case two mouses eaten one after another)
-  return function () {
-    i = i ? 0 : 1;
-    return mouseSoundsArr[i];
-  };
-})(0);
-function initSounds() {
-  musicSound.init();
-  deathSound.init();
-  mouseSoundsArr[0].init();
-  mouseSoundsArr[1].init();
-  rabbitSound.init();
-}
+let audioCtx;
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const baseUrl = "http://192.168.1.201:5501/resources/sounds/";
+let mouseSoundUrl = baseUrl + "eat_mouse_sound.mp3";
+let rabbitSoundUrl = baseUrl + "eat_rabbit_sound.mp3";
+let deathSoundUrl = baseUrl + "death.mp3";
+let musicSoundUrl = baseUrl + "disco.mp3";
 
+let mouseSoundBuffer = new Sound(mouseSoundUrl);
+let rabbitSoundBuffer = new Sound(rabbitSoundUrl);
+let deathSoundBuffer = new Sound(deathSoundUrl);
+let musicSoundBuffer = new Sound(musicSoundUrl, true, 0.2);
 let touch = false;
 let initialMsg = function () {
   if (!touch) {
@@ -130,7 +120,6 @@ const rabbitLifeSpanMin = 10;
 const rabbitLifeSpanMax = 80;
 
 //main game variables
-let userActive = false;
 let snake;
 let mouse;
 let rabbit = null;
@@ -197,7 +186,7 @@ function newGame() {
   gameIntervalID = setInterval(update, 1000 / snake.speed);
 }
 function update() {
-  deathAngel();
+  deathAngel(); //remove rabbits with finished lifespan
   snake.move();
   adjustStatus();
   makeRabbitWithDelay();
@@ -229,11 +218,6 @@ function pauseUnpause() {
   }
 }
 function control(evt) {
-  if (!userActive) {
-    userActive = true;
-    initSounds();
-  }
-
   let controlCode;
   if (!touch) {
     controlCode = evt.code;
@@ -293,7 +277,7 @@ function adjustStatus() {
 }
 function gameSetup() {
   if (isSound) {
-    musicSound.play();
+    musicSoundBuffer.play();
   }
   window.removeEventListener("resize", resizeOptimally);
   openSettingsBtn.style.display = "none";
@@ -306,7 +290,7 @@ function gameSetup() {
 }
 function outOfGameSetup() {
   if (isSound) {
-    musicSound.stop();
+    musicSoundBuffer.stop();
   }
   if (!isPaused) {
     openSettingsBtn.style.display = "block";
@@ -317,7 +301,6 @@ function outOfGameSetup() {
   overCanvas.style.display = "flex";
   screen.style.display = "flex";
   msgEl.textContent = msg;
-  isSound && musicSound.stop();
   if (touch && isDead) {
     touchControlsBox.style.display = "none";
     showLinksId = setTimeout(function () {
@@ -469,36 +452,11 @@ function adjustSettingsButtonsAppearance() {
   isBorder && borderToggler.classList.toggle("on");
   isSound && soundToggler.classList.toggle("on");
 }
-function Sound(src, volume = "1", loop = false) {
-  this.vol = volume;
-  this.sound = document.createElement("audio");
-  this.sound.src = src;
-  this.sound.preload = true;
-  this.sound.setAttribute("controls", "true");
-  this.sound.style.display = "none";
-  this.sound.volume = 0;
-  this.sound.loop = loop;
-  document.body.appendChild(this.sound);
-
-  this.play = function () {
-    this.sound.play();
-  };
-  this.stop = function () {
-    this.sound.pause();
-  };
-  this.init = function () {
-    this.play();
-    this.stop();
-    this.sound.volume = this.vol;
-  };
-}
 class Snake {
   constructor() {
     this.speed = speed;
     this.score = 0;
     isDead = false;
-    this.deathSound = deathSound;
-    this.deathSound.sound.load();
     this.partsToGrow = 0;
     this.timeToGrow = false;
     this.body = [
@@ -522,6 +480,9 @@ class Snake {
       y: this.body[this.body.length - 1][1],
     };
   }
+  deathSound() {
+    deathSoundBuffer.play();
+  }
   checkIfOnFood(newHead) {
     let food = null;
     if (mouse.x === newHead[0] && mouse.y === newHead[1]) {
@@ -532,7 +493,7 @@ class Snake {
       rabbit = null;
     }
     if (food) {
-      isSound && food.dyingSound.play();
+      isSound && food.dyingSound();
       this.foodsInBelly.push(food);
       food.seed();
       food.getsEaten();
@@ -648,7 +609,7 @@ class Snake {
     return false;
   }
   die() {
-    isSound && this.deathSound.play();
+    isSound && deathSoundBuffer.play();
     isDead = true;
     if (record < this.score) {
       record = this.score;
@@ -659,7 +620,6 @@ class Snake {
     } else {
       msg = gameOverMsg();
     }
-    musicSound.stop();
     clearInterval(gameIntervalID);
     mouse = null;
     rabbit = null;
@@ -723,12 +683,24 @@ class Mouse {
   constructor(emptyCell) {
     this.x = emptyCell[0];
     this.y = emptyCell[1];
-    this.dyingSound = mouseSound();
-    this.dyingSound.sound.load();
+    //this.dyingSound.sound.load();
     this.calories = 10; //for score
     this.look = mouseImg;
     this.lifespan = null;
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
+  }
+  dyingSound() {
+    //mouseSound.currentTime = "1";
+    //mouseSound.load();
+    mouseSoundBuffer.play();
+    // let promise = mouseSound.play();
+    // if (promise !== undefined) {
+    //   promise
+    //     .then((_) => {})
+    //     .catch((err) => {
+    //       alert("prevented");
+    //     });
+    // }
   }
   seed() {
     mouse = new Mouse(getRandomEmptyCell());
@@ -747,11 +719,12 @@ class Rabbit {
     this.x = emptyCell[0];
     this.y = emptyCell[1];
     this.calories = 50;
-    this.dyingSound = rabbitSound;
-    this.dyingSound.sound.load();
     this.look = rabbitImg;
     this.lifeSpan = randomBetween(rabbitLifeSpanMin, rabbitLifeSpanMax);
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
+  }
+  dyingSound() {
+    rabbitSoundBuffer.play();
   }
   seed() {
     rabbitBornDelay = randomBetween(rabbitDelayMin, rabbitDelayMax);
@@ -791,4 +764,42 @@ function getRandomEmptyCell() {
 }
 function randomBetween(min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
+}
+function Sound(url, loop = false, volume = 1) {
+  this.loop = loop;
+  this.buffer = null;
+  this.source = null;
+  this.gainNode = audioCtx.createGain();
+  this.gainNode.gain.value = volume;
+  this.gainNode.connect(audioCtx.destination);
+  window
+    .fetch(url)
+    .then((res) => res.arrayBuffer())
+    .then((arrayBuffer) => {
+      audioCtx
+        .decodeAudioData(arrayBuffer)
+        .then((audioBuffer) => {
+          this.buffer = audioBuffer;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+
+  this.play = function () {
+    if (this.buffer) {
+      this.source = audioCtx.createBufferSource();
+      this.source.buffer = this.buffer;
+      this.source.loop = this.loop;
+      //this.source.connect(audioCtx.destination);
+      this.source.connect(this.gainNode);
+
+      this.source.start(0);
+    }
+  };
+  this.stop = function () {
+    if (this.source) {
+      this.source.stop(0);
+    }
+  };
 }
