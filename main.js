@@ -41,7 +41,7 @@ const bloodImg = document.getElementById("blood_img");
 
 let audioCtx;
 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const baseUrl = "http://192.168.1.201:5501/resources/sounds/";
+const baseUrl = "https://snake.codevivi.com/resources/sounds/";
 let mouseSoundUrl = baseUrl + "eat_mouse_sound.mp3";
 let rabbitSoundUrl = baseUrl + "eat_rabbit_sound.mp3";
 let deathSoundUrl = baseUrl + "death.mp3";
@@ -683,24 +683,13 @@ class Mouse {
   constructor(emptyCell) {
     this.x = emptyCell[0];
     this.y = emptyCell[1];
-    //this.dyingSound.sound.load();
     this.calories = 10; //for score
     this.look = mouseImg;
     this.lifespan = null;
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
   }
   dyingSound() {
-    //mouseSound.currentTime = "1";
-    //mouseSound.load();
     mouseSoundBuffer.play();
-    // let promise = mouseSound.play();
-    // if (promise !== undefined) {
-    //   promise
-    //     .then((_) => {})
-    //     .catch((err) => {
-    //       alert("prevented");
-    //     });
-    // }
   }
   seed() {
     mouse = new Mouse(getRandomEmptyCell());
