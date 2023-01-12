@@ -8,3 +8,4 @@ My goal was to implement some functionality from
                 Nokia 'Snake' game.
 <br>
 [Check it live](https://snake.codevivi.com/)
+![alt screenshot](resources/screenshot.png)
