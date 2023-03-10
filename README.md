@@ -1,12 +1,14 @@
-# Vanilla JavaScript, HTML5 canvas Snake Game 
-JS practice project.<br>
-<br>
-HTML, CSS, JS <br>
+# 🪧 Vanilla JavaScript, HTML5 canvas Snake Game
 
-My goal was to implement some functionality from
-                nostalgic
-                Nokia 'Snake' game.
-<br>
-[Check it live](https://snake.codevivi.com/)
-<br>
-![alt screenshot](resources/screenshot.png)
+## 📋 About
+
+🌐 **Site published at**: [https://codevivi.github.io/JS-snake/index.html](https://codevivi.github.io/JS-snake/index.html)
+
+JS practice project, snake game.
+[More about](https://codevivi.github.io/JS-snake/about.html)
+
+🎯 **Goals:**
+
+My goal was to implement some functionality similar to nostalgic Nokia 'Snake' game.
+
+[![alt screenshot](resources/screenshot.png)](https://codevivi.github.io/JS-snake/index.html)
