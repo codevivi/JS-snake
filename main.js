@@ -765,7 +765,7 @@ function Sound(url, loop = false, volume = 1) {
     .fetch(url,{
                 headers: {
                   'Access-Control-Allow-Origin': 'https://codevivi.github.io/'
-                })
+                }})
     .then((res) => res.arrayBuffer())
     .then((arrayBuffer) => {
       audioCtx
