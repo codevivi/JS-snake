@@ -752,9 +752,10 @@ function Sound(url, loop = false, volume = 1) {
   this.gainNode.gain.value = volume;
   this.gainNode.connect(audioCtx.destination);
   window
-    .fetch(url, { mode: "no-cors", headers: { contentType: "audio/mpeg" } })
-    .then((res) => res.arrayBuffer())
+    .fetch(url)
+    .then((res) => console.log(res) || res.arrayBuffer())
     .then((arrayBuffer) => {
+      console.log(arrayBuffer);
       audioCtx
         .decodeAudioData(arrayBuffer)
         .then((audioBuffer) => {
