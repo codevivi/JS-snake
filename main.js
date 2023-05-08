@@ -41,7 +41,7 @@ const bloodImg = document.getElementById("blood_img");
 
 let audioCtx;
 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const baseUrl = "https://snake.codevivi.com/resources/sounds/"; //change host if on localhost
+const baseUrl = "https://github.com/codevivi/JS-snake/tree/master/resources/sounds"; //change host if on localhost
 let mouseSoundUrl = baseUrl + "eat_mouse_sound.mp3";
 let rabbitSoundUrl = baseUrl + "eat_rabbit_sound.mp3";
 let deathSoundUrl = baseUrl + "death.mp3";
