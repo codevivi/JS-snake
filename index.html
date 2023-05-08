@@ -7,6 +7,7 @@
     <meta name="keywords" content="snake, JS, vanilla, Javascript, game, web game">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" type="image/png" href="./resources/images/favicon-16x16.png">
     <title>Vanilla JavaScript Snake</title>
 </head>
 
@@ -36,39 +37,39 @@
                 </svg>
             </button>
             <p class="score" title="Score">
-                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M4.0051 19.2C3.8251 19.2 3.6451 19.16 3.4851 19.06C3.0051 18.78 2.86509 18.16 3.14509 17.68L5.5851 13.58C5.7651 13.3 6.0651 13.1 6.4051 13.1C6.7451 13.08 7.06511 13.24 7.26511 13.52L8.3051 14.96L10.5051 11.2C10.6651 10.92 10.9851 10.72 11.3051 10.7C11.6451 10.68 11.9651 10.84 12.1651 11.1L14.0851 13.68L19.1451 5.27999C19.4251 4.79999 20.0451 4.65998 20.5251 4.93998C21.0051 5.21998 21.1451 5.83998 20.8651 6.31998L15.0451 16C14.8651 16.28 14.5651 16.46 14.2451 16.48C13.9051 16.5 13.5851 16.34 13.3851 16.08L11.4651 13.52L9.24509 17.3C9.06509 17.6 8.76509 17.78 8.42509 17.8C8.08509 17.82 7.76511 17.66 7.56511 17.38L6.52509 15.94L4.86511 18.72C4.68511 19.02 4.3451 19.2 4.0051 19.2Z"
                         fill="#939393" />
                 </svg>
-                <span class="display-value" id="score-display">600</span></p>
+                <span class="display-value" id="score-display">600</span>
+            </p>
             <p title="Length" class="length">
-                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M9.78508 10.94H4.32508C3.70508 10.94 3.20508 10.44 3.20508 9.81999V5.51999C3.20508 4.89999 3.70508 4.39999 4.32508 4.39999H9.78508C10.4051 4.39999 10.9051 4.89999 10.9051 5.51999V9.81999C10.9051 10.44 10.4051 10.94 9.78508 10.94ZM4.80508 9.33998H9.30508V5.99999H4.80508V9.33998ZM19.6851 10.94H14.2251C13.6051 10.94 13.1051 10.44 13.1051 9.81999V5.51999C13.1051 4.89999 13.6051 4.39999 14.2251 4.39999H19.6851C20.3051 4.39999 20.8051 4.89999 20.8051 5.51999V9.81999C20.8051 10.44 20.3051 10.94 19.6851 10.94ZM14.7051 9.33998H19.2051V5.99999H14.7051V9.33998ZM9.78508 19.6H4.32508C3.70508 19.6 3.20508 19.1 3.20508 18.48V14.18C3.20508 13.56 3.70508 13.06 4.32508 13.06H9.78508C10.4051 13.06 10.9051 13.56 10.9051 14.18V18.48C10.9051 19.1 10.4051 19.6 9.78508 19.6ZM4.80508 18H9.30508V14.66H4.80508V18ZM19.6851 19.6H14.2251C13.6051 19.6 13.1051 19.1 13.1051 18.48V14.18C13.1051 13.56 13.6051 13.06 14.2251 13.06H19.6851C20.3051 13.06 20.8051 13.56 20.8051 14.18V18.48C20.8051 19.1 20.3051 19.6 19.6851 19.6ZM14.7051 18H19.2051V14.66H14.7051V18Z"
                         fill="#939393" />
                 </svg>
 
-                <span class="display-value" id="length-display">2000</span></p>
+                <span class="display-value" id="length-display">2000</span>
+            </p>
             <p title="Record" class="record">
-                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M19.0051 6.01999C19.0051 3.89999 15.4851 2.8 12.0051 2.8C8.5251 2.8 5.0051 3.89999 5.0051 6.01999C5.0051 6.03999 5.0051 6.06 5.0051 6.08V6.1V18.08C5.0051 20.14 8.5251 21.22 12.0051 21.22C15.4851 21.22 19.0051 20.14 19.0051 18.08V6.1V6.08C19.0051 6.04 19.0051 6.03999 19.0051 6.01999ZM17.4051 12.08C17.4051 12.52 15.5051 13.62 12.0051 13.62C8.5051 13.62 6.6051 12.54 6.6051 12.08V8.13999C8.0051 8.85999 9.9851 9.23999 12.0051 9.23999C14.0251 9.23999 16.0051 8.85999 17.4051 8.13999V12.08ZM12.0051 4.4C15.5651 4.4 17.4051 5.53999 17.4051 6.01999C17.4051 6.49999 15.5651 7.63999 12.0051 7.63999C8.4451 7.63999 6.6051 6.49999 6.6051 6.01999C6.6051 5.53999 8.4451 4.4 12.0051 4.4ZM12.0051 19.6C8.5051 19.6 6.6051 18.52 6.6051 18.06V14.14C8.0051 14.84 9.9851 15.2 12.0051 15.2C14.0251 15.2 16.0051 14.84 17.4051 14.14V18.06C17.4051 18.52 15.5051 19.6 12.0051 19.6ZM15.4051 11.38V10.4C15.4051 10.02 15.7251 9.7 16.1051 9.7C16.4851 9.7 16.8051 10.02 16.8051 10.4V11.38C16.8051 11.76 16.4851 12.08 16.1051 12.08C15.7251 12.08 15.4051 11.78 15.4051 11.38Z"
                         fill="#939393" />
                 </svg>
 
-                <span class="display-value" id="record-display">2000</span></p>
+                <span class="display-value" id="record-display">2000</span>
+            </p>
             <p title="Speed" class="speed">
-                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg class="disp-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M17.3651 7.77998L13.4851 16.14C13.1451 17 12.5451 17.5 11.8851 17.5C11.3451 17.5 10.8851 17.22 10.6251 16.78C10.3451 16.26 10.3651 15.62 10.7051 15.08L15.7851 6.93999C16.0451 6.53999 16.5651 6.40002 16.9851 6.62002C17.4051 6.84002 17.5651 7.33998 17.3651 7.77998ZM18.7251 10.2C18.4251 9.88 17.9251 9.86001 17.5851 10.16C17.2651 10.46 17.2451 10.96 17.5451 11.3C18.8651 12.74 19.6051 14.62 19.6051 16.6C19.6051 17.04 19.9651 17.4 20.4051 17.4C20.8451 17.4 21.2051 17.04 21.2051 16.6C21.2051 14.22 20.3251 11.94 18.7251 10.2ZM12.6451 8.87998C13.0851 8.91998 13.4651 8.60001 13.5051 8.16001C13.5451 7.72001 13.2251 7.34 12.7851 7.3C12.5251 7.28 12.2651 7.26001 12.0051 7.26001C6.9251 7.26001 2.8051 11.46 2.8051 16.62C2.8051 17.06 3.1651 17.42 3.6051 17.42C4.0451 17.42 4.4051 17.06 4.4051 16.62C4.4051 12.34 7.8051 8.86001 12.0051 8.86001C12.2251 8.84001 12.4451 8.85998 12.6451 8.87998Z"
                         fill="#939393" />
                 </svg>
-                <span class="display-value" id="speed-display">2000</span></p>
+                <span class="display-value" id="speed-display">2000</span>
+            </p>
 
 
         </div>
@@ -80,8 +81,7 @@
                 <p class="screen-msg" class="touch" data-control="Enter" id="screen-msg-id">Press ENTER to start</p>
             </div>
             <div class="settings " id="settings-id">
-                <button type="button" class="settings-button settings-button--close" id="close-settings"><svg width="24"
-                        height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <button type="button" class="settings-button settings-button--close" id="close-settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M16.945 15.66C17.305 16.02 17.305 16.58 16.945 16.94C16.765 17.12 16.545 17.2 16.305 17.2C16.065 17.2 15.845 17.12 15.665 16.94L12.005 13.28L8.345 16.94C8.165 17.12 7.94501 17.2 7.70501 17.2C7.46501 17.2 7.24502 17.12 7.06502 16.94C6.70502 16.58 6.70502 16.02 7.06502 15.66L10.725 12L7.06502 8.33999C6.70502 7.97999 6.70502 7.41999 7.06502 7.05999C7.42502 6.69999 7.985 6.69999 8.345 7.05999L12.005 10.72L15.665 7.05999C16.025 6.69999 16.585 6.69999 16.945 7.05999C17.305 7.41999 17.305 7.97999 16.945 8.33999L13.285 12L16.945 15.66Z"
                             fill="white" />
@@ -91,23 +91,19 @@
                     <div class="settings-buttons">
                         <div class="button-field">
                             <p class="button-label">Sound</p>
-                            <button type="button" class="toggle-button" id="sound-on-off"><span class="toggler"
-                                    id="sound-toggler"></span></button>
+                            <button type="button" class="toggle-button" id="sound-on-off"><span class="toggler" id="sound-toggler"></span></button>
                         </div>
                         <div class="button-field">
                             <p class="button-label">Grid</p>
-                            <button type="button" class="toggle-button" id="grid-on-off"><span class="toggler"
-                                    id="grid-toggler"></span></button>
+                            <button type="button" class="toggle-button" id="grid-on-off"><span class="toggler" id="grid-toggler"></span></button>
                         </div>
                         <div class="button-field">
                             <p class="button-label">Fence</p>
-                            <button type="button" class="toggle-button" id="border-on-off"><span class="toggler "
-                                    id="border-toggler"></span></button>
+                            <button type="button" class="toggle-button" id="border-on-off"><span class="toggler " id="border-toggler"></span></button>
                         </div>
                         <div class="button-field">
                             <p class="button-label">Use local storage</p>
-                            <button type="button" class="toggle-button" id="save-on-off"><span class="toggler "
-                                    id="save-toggler"></span></button>
+                            <button type="button" class="toggle-button" id="save-on-off"><span class="toggler " id="save-toggler"></span></button>
                         </div>
                         <div class="button-field">
                             <p class="button-label">Speed</p>
@@ -142,7 +138,6 @@
         </div>
         <img class="hidden" id="rabbit_img" src="resources/images/rabbit.png" alt="rabbit" width="50" height="50" />
         <img class="hidden" id="mouse_img" src="resources/images/mouse.png" alt="mouse" width="50" height="50" />
-        <audio src="resources/sounds/eat_mouse_sound.mp3" id="mouse-sound"></audio>
 
     </footer>
     <script src="./main.js"> </script>

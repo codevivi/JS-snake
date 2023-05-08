@@ -37,18 +37,16 @@ const rabbitImg = document.getElementById("rabbit_img");
 const mouseImg = document.getElementById("mouse_img");
 const bloodImg = document.getElementById("blood_img");
 
-let audioCtx;
-audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const baseUrl = "https://github.com/codevivi/JS-snake/blob/master/resources/sounds/"; //change host if on localhost
-let mouseSoundUrl = baseUrl + "eat_mouse_sound.mp3";
-let rabbitSoundUrl = baseUrl + "eat_rabbit_sound.mp3";
-let deathSoundUrl = baseUrl + "death.mp3";
-let musicSoundUrl = baseUrl + "disco.mp3";
+let mouseSoundSrc = "./resources/sounds/eat_mouse_sound.mp3";
+let rabbitSoundSrc = "./resources/sounds/eat_rabbit_sound.mp3";
+let musicSoundSrc = "./resources/sounds/disco.mp3";
+let deathSoundSrc = "./resources/sounds/death.mp3";
 
-let mouseSoundBuffer = new Sound(mouseSoundUrl);
-let rabbitSoundBuffer = new Sound(rabbitSoundUrl);
-let deathSoundBuffer = new Sound(deathSoundUrl);
-let musicSoundBuffer = new Sound(musicSoundUrl, true, 0.2);
+let musicSound = new Sound(musicSoundSrc, { loop: true, volume: 0.2 });
+let rabbitSound = new Sound(rabbitSoundSrc);
+let deathSound = new Sound(deathSoundSrc);
+let mouseSound = new Sound(mouseSoundSrc);
+
 let touch = false;
 let initialMsg = function () {
   if (!touch) {
@@ -275,7 +273,7 @@ function adjustStatus() {
 }
 function gameSetup() {
   if (isSound) {
-    musicSoundBuffer.play();
+    musicSound.play();
   }
   window.removeEventListener("resize", resizeOptimally);
   openSettingsBtn.style.display = "none";
@@ -288,7 +286,7 @@ function gameSetup() {
 }
 function outOfGameSetup() {
   if (isSound) {
-    musicSoundBuffer.stop();
+    musicSound.stop();
   }
   if (!isPaused) {
     openSettingsBtn.style.display = "block";
@@ -479,7 +477,7 @@ class Snake {
     };
   }
   deathSound() {
-    deathSoundBuffer.play();
+    deathSound.play();
   }
   checkIfOnFood(newHead) {
     let food = null;
@@ -602,7 +600,7 @@ class Snake {
     return false;
   }
   die() {
-    isSound && deathSoundBuffer.play();
+    isSound && deathSound.play();
     isDead = true;
     if (record < this.score) {
       record = this.score;
@@ -682,7 +680,7 @@ class Mouse {
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
   }
   dyingSound() {
-    mouseSoundBuffer.play();
+    mouseSound.play();
   }
   seed() {
     mouse = new Mouse(getRandomEmptyCell());
@@ -706,7 +704,7 @@ class Rabbit {
     c.drawImage(this.look, this.x + 4, this.y + 4, step - 8, step - 8);
   }
   dyingSound() {
-    rabbitSoundBuffer.play();
+    rabbitSound.play();
   }
   seed() {
     rabbitBornDelay = randomBetween(rabbitDelayMin, rabbitDelayMax);
@@ -741,45 +739,23 @@ function getRandomEmptyCell() {
     return [randomCellX, randomCellY];
   }
 }
+
 function randomBetween(min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
-function Sound(url, loop = false, volume = 1) {
-  this.loop = loop;
-  this.buffer = null;
-  this.source = null;
-  this.gainNode = audioCtx.createGain();
-  this.gainNode.gain.value = volume;
-  this.gainNode.connect(audioCtx.destination);
-  window
-    .fetch(url)
-    .then((res) => console.log(res) || res.arrayBuffer())
-    .then((arrayBuffer) => {
-      console.log(arrayBuffer);
-      audioCtx
-        .decodeAudioData(arrayBuffer)
-        .then((audioBuffer) => {
-          this.buffer = audioBuffer;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
 
+function Sound(src, options = { loop: false, volume: 1 }) {
+  this.el = new Audio(src);
+
+  if (options.loop) {
+    this.el.loop = true;
+  }
+  this.el.volume = options.volume;
   this.play = function () {
-    if (this.buffer) {
-      this.source = audioCtx.createBufferSource();
-      this.source.buffer = this.buffer;
-      this.source.loop = this.loop;
-      //this.source.connect(audioCtx.destination);
-      this.source.connect(this.gainNode);
-
-      this.source.start(0);
-    }
+    this.el.load();
+    this.el.play();
   };
   this.stop = function () {
-    if (this.source) {
-      this.source.stop(0);
-    }
+    this.el.pause();
   };
 }
