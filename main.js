@@ -762,10 +762,7 @@ function Sound(url, loop = false, volume = 1) {
   this.gainNode.gain.value = volume;
   this.gainNode.connect(audioCtx.destination);
   window
-    .fetch(url,{
-                headers: {
-                  'Access-Control-Allow-Origin': 'https://codevivi.github.io/'
-                }})
+    .fetch(url,{mode: "no-cors"})
     .then((res) => res.arrayBuffer())
     .then((arrayBuffer) => {
       audioCtx
