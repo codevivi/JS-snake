@@ -13,9 +13,7 @@ const msgEl = document.getElementById("screen-msg-id");
 const touchControlsBox = document.getElementsByClassName("touch-controls")[0];
 const touchControls = Array.from(document.getElementsByClassName("touch"));
 const touchDirControls = Array.from(document.getElementsByClassName("dir"));
-const touchHiddenInGame = Array.from(
-  document.getElementsByClassName("touch-hidden-in-game")
-);
+const touchHiddenInGame = Array.from(document.getElementsByClassName("touch-hidden-in-game"));
 //settings elements
 const gridOnOffBtn = document.getElementById("grid-on-off");
 const gridToggler = document.getElementById("grid-toggler");
@@ -41,11 +39,11 @@ const bloodImg = document.getElementById("blood_img");
 
 let audioCtx;
 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const baseUrl = "https://github.com/codevivi/JS-snake/tree/master/resources/sounds"; //change host if on localhost
-let mouseSoundUrl = baseUrl + "eat_mouse_sound.mp3";
-let rabbitSoundUrl = baseUrl + "eat_rabbit_sound.mp3";
-let deathSoundUrl = baseUrl + "death.mp3";
-let musicSoundUrl = baseUrl + "disco.mp3";
+const baseUrl = "https://github.com/codevivi/JS-snake/blob/master/resources/sounds/"; //change host if on localhost
+let mouseSoundUrl = baseUrl + "eat_mouse_sound.mp3?raw=true";
+let rabbitSoundUrl = baseUrl + "eat_rabbit_sound.mp3?raw=true";
+let deathSoundUrl = baseUrl + "death.mp3?raw=true";
+let musicSoundUrl = baseUrl + "disco.mp3?raw=true";
 
 let mouseSoundBuffer = new Sound(mouseSoundUrl);
 let rabbitSoundBuffer = new Sound(rabbitSoundUrl);
@@ -596,12 +594,7 @@ class Snake {
       }
     }
     if (isBorder) {
-      if (
-        newHeadX >= canvasSize ||
-        newHeadX < 0 ||
-        newHeadY >= canvasSize ||
-        newHeadY < 0
-      ) {
+      if (newHeadX >= canvasSize || newHeadX < 0 || newHeadY >= canvasSize || newHeadY < 0) {
         snake.drawBlood(headX, newHeadX, headY, newHeadY);
         return true;
       }
@@ -737,10 +730,7 @@ function getRandomEmptyCell() {
   let randomCellY = Math.floor(Math.random() * stepsCount) * step;
   let isEmpty = true;
   for (let i = 0; i < occupiedCellsArr.length; i++) {
-    if (
-      occupiedCellsArr[i][0] === randomCellX &&
-      occupiedCellsArr[i][1] === randomCellY
-    ) {
+    if (occupiedCellsArr[i][0] === randomCellX && occupiedCellsArr[i][1] === randomCellY) {
       isEmpty = false;
       break;
     }
@@ -762,7 +752,7 @@ function Sound(url, loop = false, volume = 1) {
   this.gainNode.gain.value = volume;
   this.gainNode.connect(audioCtx.destination);
   window
-    .fetch(url,{mode: "no-cors"})
+    .fetch(url, { mode: "no-cors" })
     .then((res) => res.arrayBuffer())
     .then((arrayBuffer) => {
       audioCtx
