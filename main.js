@@ -131,6 +131,7 @@ let isPaused = false;
 let isDead = true; //there is no snake yet
 let score = 0;
 let showLinksId = null;
+let allCells = [];
 
 ///settings variables
 let isSaveOn = Number(localStorage.getItem("save")) || 0;
@@ -409,6 +410,11 @@ function resizeCanvas() {
   canvasBg.height = canvasSize;
   canvasWrapper.style.width = canvasSize + "px";
   canvasWrapper.style.height = canvasSize + "px";
+  for (let x = 0; x < canvasSize; x += step) {
+    for (let y = 0; y < canvasSize; y += step) {
+      allCells.push([x, y]);
+    }
+  }
 }
 
 function decideCanvasSizeByScreen(windowWidth, stepsCount) {
@@ -724,20 +730,9 @@ function getRandomEmptyCell() {
   let occupiedCellsArr = [...snake.body];
   mouse && occupiedCellsArr.push([mouse.x, mouse.y]);
   rabbit && occupiedCellsArr.push([rabbit.x, rabbit.y]);
-  let randomCellX = Math.floor(Math.random() * stepsCount) * step;
-  let randomCellY = Math.floor(Math.random() * stepsCount) * step;
-  let isEmpty = true;
-  for (let i = 0; i < occupiedCellsArr.length; i++) {
-    if (occupiedCellsArr[i][0] === randomCellX && occupiedCellsArr[i][1] === randomCellY) {
-      isEmpty = false;
-      break;
-    }
-  }
-  if (!isEmpty) {
-    return getRandomEmptyCell();
-  } else {
-    return [randomCellX, randomCellY];
-  }
+  let freeCells = allCells.filter((cell) => !occupiedCellsArr.find((pos) => pos[0] === cell[0] && pos[1] === cell[1]));
+  let randomFreeCellInd = randomBetween(0, freeCells.length - 1);
+  return freeCells[randomFreeCellInd];
 }
 
 function randomBetween(min, max) {
