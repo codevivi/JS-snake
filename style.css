@@ -27,7 +27,8 @@
 
 .main {
   height: auto;
-  padding-top: 2.3rem;
+  padding-top: 45px;
+  padding-bottom: 0.5rem;
 }
 
 .header {
@@ -125,13 +126,13 @@
 
 .display {
   position: absolute;
-  top: -2.3em;
+  top: -45px;
   left: 0;
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
   gap: 1%;
-  height: 2em;
+  height: 40px;
   width: 100%;
   padding-right: 2.5rem;
   color: rgb(107, 105, 105);
@@ -153,8 +154,14 @@
   top: 0;
   left: 0;
   width: 100%;
-  font-size: 0.6em;
+  font-size: 0.7em;
   color: rgba(221, 230, 222, 0.925);
+}
+
+@media screen and (min-width: 580px) {
+  .display-text {
+    font-size: 0.8em;
+  }
 }
 
 .display-value {
@@ -327,11 +334,13 @@ select option {
   min-width: 100vw;
   height: auto;
   min-height: 100vh;
-  padding: 0 1rem;
+  padding-right: 2.5rem;
+  padding-bottom: 100px;
   color: white;
   background-color: #1e1e1e;
   border-right: 1px solid rgb(109, 253, 118);
   overflow-x: hidden;
+  overflow-y: hidden;
   z-index: 100;
 }
 
@@ -346,12 +355,13 @@ select option {
 
 @keyframes shrink {
   0% {
-    left: 20px;
+    left: 18px;
   }
   100% {
     left: -100%;
   }
 }
+
 @keyframes grow {
   0% {
     left: -100%;
@@ -366,7 +376,7 @@ select option {
     overflow-y: hidden;
   }
   100% {
-    left: 20px;
+    left: 18px;
     overflow-y: scroll;
   }
 }
@@ -424,10 +434,9 @@ select option {
   width: 100%;
   padding: 1em;
   color: #687b91;
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 
-.body.in-game footer,
 .body.in-game header {
   display: none;
 }
