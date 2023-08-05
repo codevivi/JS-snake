@@ -1,4 +1,4 @@
-const body = document.getElementsByTagName("body")[0];
+const body = document.querySelector(".body");
 const canvas = document.getElementById("canvas-main-id");
 const canvasBg = document.getElementById("canvas-bg-id");
 const canvasWrapper = document.getElementById("wrapper");
@@ -14,6 +14,7 @@ const touchControlsBox = document.getElementsByClassName("touch-controls")[0];
 const touchControls = Array.from(document.getElementsByClassName("touch"));
 const touchDirControls = Array.from(document.getElementsByClassName("dir"));
 const touchHiddenInGame = Array.from(document.getElementsByClassName("touch-hidden-in-game"));
+
 //settings elements
 const gridOnOffBtn = document.getElementById("grid-on-off");
 const gridToggler = document.getElementById("grid-toggler");
@@ -137,7 +138,7 @@ let allCells = [];
 let isSaveOn = Number(localStorage.getItem("save")) || 0;
 let isGrid = Number(localStorage.getItem("grid")) || 0;
 let isBorder = Number(localStorage.getItem("border")) || 0;
-let speed = Number(localStorage.getItem("speed")) || 4; //steps per second
+let speed = Number(localStorage.getItem("speed")) || 1; //steps per second
 let isSound = Number(localStorage.getItem("sound")) || 0;
 let record = Number(localStorage.getItem("record")) || 0;
 isSaveOn && saveToggler.classList.toggle("on");
@@ -160,13 +161,14 @@ soundOnOffBtn.addEventListener("click", toggleSound);
 speedSelect.addEventListener("change", setSpeed);
 window.addEventListener("keydown", control);
 msgEl.addEventListener("touchend", firstTouch);
+
 function firstTouch(e) {
   e.preventDefault();
   touch = true;
   msgEl.removeEventListener("touchend", firstTouch);
   window.removeEventListener("keydown", control);
   msgEl.textContent = initialMsg();
-  touchControls.forEach((el) => el.addEventListener("touchstart", control));
+  touchControls.forEach((el) => el.addEventListener("touchstart", control, { passive: false }));
 }
 
 function newGame() {
@@ -276,6 +278,7 @@ function gameSetup() {
   if (isSound) {
     musicSound.play();
   }
+  body.classList.add("in-game");
   window.removeEventListener("resize", resizeOptimally);
   openSettingsBtn.style.display = "none";
   settings.style.display = "none";
@@ -293,6 +296,7 @@ function outOfGameSetup() {
     openSettingsBtn.style.display = "block";
   }
 
+  body.classList.remove("in-game");
   settings.style.display = "none";
   window.addEventListener("resize", resizeOptimally);
   overCanvas.style.display = "flex";
@@ -398,7 +402,8 @@ function drawSquare(x, y, fillColor) {
 /////// canvas setup functions
 function resizeOptimally() {
   clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(resizeCanvas, 200);
+  // resizeTimeout = setTimeout(resizeCanvas, 200);
+  resizeTimeout = setTimeout(() => window.location.reload(), 200);
 }
 
 function resizeCanvas() {
@@ -422,7 +427,7 @@ function decideCanvasSizeByScreen(windowWidth, stepsCount) {
   let step;
   if (windowWidth < 300) {
     size = 240;
-  } else if (windowWidth < 525) {
+  } else if (windowWidth < 580) {
     size = 300;
   } else if (windowWidth < 1470) {
     size = 525;
@@ -571,9 +576,6 @@ class Snake {
       return;
     }
 
-    this.checkIfOnFood(newHead);
-    this.body.unshift(newHead);
-    this.drawHead();
     if (!this.checkIfFinishedDigesting(this.tail)) {
       this.clearTail();
       this.body.pop();
@@ -581,6 +583,9 @@ class Snake {
       this.clearTail();
       this.drawTail();
     }
+    this.body.unshift(newHead);
+    this.drawHead();
+    this.checkIfOnFood(newHead);
   }
   findCollision(newHead) {
     let len = this.body.length;
@@ -693,7 +698,7 @@ class Mouse {
   }
   getsEaten() {
     snake.score += this.calories;
-    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 9) {
+    if (snake.score - snake.speed * 100 >= 0 && snake.speed < 9) {
       snake.speed += 1;
       clearInterval(gameIntervalID);
       gameIntervalID = setInterval(update, 1000 / snake.speed);
@@ -717,7 +722,7 @@ class Rabbit {
   }
   getsEaten() {
     snake.score += this.calories;
-    if (snake.score - snake.speed * 100 >= 100 && snake.speed < 9) {
+    if (snake.score - snake.speed * 100 >= 0 && snake.speed < 9) {
       snake.speed += 1;
       clearInterval(gameIntervalID);
       gameIntervalID = setInterval(update, 1000 / snake.speed);
