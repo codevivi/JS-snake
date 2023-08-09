@@ -112,9 +112,9 @@ const gridColor = "rgb(56, 56, 56)";
 const borderColor = "rgb(125, 249, 255)";
 const snakeColor = "rgba(15, 252, 7, 0.5)";
 const rabbitDelayMin = 10; //steps
-const rabbitDelayMax = 50; //steps
-const rabbitLifeSpanMin = 10;
-const rabbitLifeSpanMax = 80;
+const rabbitDelayMax = 10; //steps
+const rabbitLifeSpanMin = 20;
+const rabbitLifeSpanMax = 20;
 
 //main game variables
 let snake;
@@ -185,9 +185,9 @@ function newGame() {
   gameIntervalID = setInterval(update, 1000 / snake.speed);
 }
 function update() {
-  deathAngel(); //remove rabbits with finished lifespan
   snake.move();
   adjustStatus();
+  deathAngel(); //remove rabbits with finished lifespan
   makeRabbitWithDelay();
 }
 function makeRabbitWithDelay() {
@@ -225,6 +225,9 @@ function control(evt) {
     if (controlCode.includes("Arrow")) {
       evt.preventDefault(); // to prevent delay
     }
+  }
+  if (!snake && controlCode !== "Enter") {
+    return;
   }
   switch (controlCode) {
     case "Enter":
