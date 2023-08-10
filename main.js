@@ -112,9 +112,9 @@ const gridColor = "rgb(56, 56, 56)";
 const borderColor = "rgb(125, 249, 255)";
 const snakeColor = "rgba(15, 252, 7, 0.5)";
 const rabbitDelayMin = 10; //steps
-const rabbitDelayMax = 10; //steps
-const rabbitLifeSpanMin = 20;
-const rabbitLifeSpanMax = 20;
+const rabbitDelayMax = 50; //steps
+const rabbitLifeSpanMin = 10;
+const rabbitLifeSpanMax = 80;
 
 //main game variables
 let snake;
